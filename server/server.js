@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 require('dotenv').config();
+const pool = require('./db');
 
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
@@ -10,6 +11,15 @@ const enquiryRoutes = require('./routes/enquiries');
 
 const app = express();
 
+
+// Test database connection
+pool.connect()
+    .then(() => console.log('Connected to the database'))
+    .catch((err) => {
+        console.error('Error connecting to the database', err);
+        process.exit(1); // Exit the process if the database connection fails
+    });
+    
 //Middleware
 app.use(cors());
 app.use(express.json());

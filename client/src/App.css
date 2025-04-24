@@ -1,5 +1,4 @@
-/* client/src/App.css */
-/* Base styles */
+/* /* 
 :root {
   --primary-color: #2c3e50;
   --secondary-color: #3498db;
@@ -65,7 +64,7 @@ p {
   font-size: 1.2rem;
 }
 
-/* Header & Navbar */
+
 .navbar {
   background-color: var(--primary-color);
   padding: 1rem 0;
@@ -99,7 +98,6 @@ p {
   color: white;
 }
 
-/* Buttons */
 .btn {
   display: inline-block;
   padding: 0.5rem 1.5rem;
@@ -137,7 +135,7 @@ p {
   background-color: #c0392b;
 }
 
-/* Forms */
+
 .form-group {
   margin-bottom: 1rem;
 }
@@ -155,7 +153,6 @@ p {
   outline: none;
 }
 
-/* Cards */
 .card {
   background-color: white;
   border: 1px solid var(--border-color);
@@ -181,7 +178,6 @@ p {
   color: var(--text-color);
 }
 
-/* Footer */
 .footer {
   background-color: var(--primary-color);
   color: white;
@@ -198,9 +194,7 @@ p {
   color: white;
 }
 
-/* ...existing code... */
 
-/* Utility Classes */
 .flex-col {
   display: flex;
   flex-direction: column;
@@ -214,7 +208,7 @@ p {
   flex-grow: 1;
 }
 
-/* Property Cards */
+
 .property-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -330,7 +324,6 @@ p {
   color: #666;
 }
 
-/* Property Filter */
 .property-filter {
   background-color: white;
   padding: 1.5rem;
@@ -354,7 +347,6 @@ p {
   margin-bottom: 0.5rem;
 }
 
-/* Saved Properties Page */
 .saved-properties-page {
   padding: 2rem 0;
 }
@@ -365,7 +357,6 @@ p {
   color: var(--primary-color);
 }
 
-/* No Results */
 .no-results {
   text-align: center;
   color: #666;
@@ -382,7 +373,6 @@ p {
   color: #999;
 }
 
-/* Property Detail Page */
 .property-detail {
   padding: 2rem 0;
 }
@@ -552,7 +542,6 @@ p {
   margin-top: 1rem;
 }
 
-/* Authentication Page */
 .auth-page {
   display: flex;
   justify-content: center;
@@ -592,13 +581,11 @@ p {
   color: var(--primary-color);
 }
 
-/* Button Block */
 .btn-block {
   display: block;
   width: 100%;
 }
 
-/* Properties Page */
 .properties-page {
   padding: 2rem 0;
 }
@@ -609,13 +596,11 @@ p {
   color: var(--primary-color);
 }
 
-/* Properties Layout */
 .properties-layout {
   display: flex;
   gap: 2rem;
 }
 
-/* Filter Sidebar */
 .filter-sidebar {
   flex: 1;
   background-color: #fff;
@@ -625,7 +610,6 @@ p {
   height: fit-content;
 }
 
-/* Properties Content */
 .properties-content {
   flex: 3;
 }
@@ -646,7 +630,6 @@ p {
   color: #999;
 }
 
-/* Not Found Page */
 .not-found {
   display: flex;
   justify-content: center;
@@ -677,7 +660,6 @@ p {
   margin-bottom: 2rem;
 }
 
-/* My Properties Page */
 .my-properties-page {
   padding: 2rem 0;
 }
@@ -789,5 +771,5 @@ p {
 }
 
 .btn-icon.delete:hover {
-  background-color: #f2dede;
-}
+  background-color: #f2dede; 
+} */

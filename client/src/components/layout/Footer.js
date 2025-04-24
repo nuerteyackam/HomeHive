@@ -6,78 +6,84 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="footer">
+    <footer className="bg-dark text-white py-5">
       <div className="container">
-        <div className="footer-content">
-          <div className="footer-section">
-            <h3>RealEstate Finder</h3>
-            <p>
+        <div className="row g-4">
+          {/* About Section */}
+          <div className="col-md-4">
+            <h3 className="text-uppercase fw-bold">RealEstate Finder</h3>
+            <p className="text-muted">
               Find your dream home with our extensive listings of properties for sale and rent.
               Whether you're looking for a house, apartment, or commercial space, we've got you covered.
             </p>
-            <div className="social-links">
-              <a href="#!" className="social-link">
+            <div className="d-flex gap-3">
+              <a href="#!" className="text-white fs-4">
                 <FaFacebook />
               </a>
-              <a href="#!" className="social-link">
+              <a href="#!" className="text-white fs-4">
                 <FaTwitter />
               </a>
-              <a href="#!" className="social-link">
+              <a href="#!" className="text-white fs-4">
                 <FaInstagram />
               </a>
-              <a href="#!" className="social-link">
+              <a href="#!" className="text-white fs-4">
                 <FaLinkedin />
               </a>
             </div>
           </div>
-          
-          <div className="footer-section">
-            <h3>Quick Links</h3>
-            <ul className="footer-links">
+
+          {/* Quick Links */}
+          <div className="col-md-2">
+            <h5 className="text-uppercase fw-bold">Quick Links</h5>
+            <ul className="list-unstyled">
               <li>
-                <Link to="/">Home</Link>
+                <Link to="/" className="text-muted text-decoration-none">Home</Link>
               </li>
               <li>
-                <Link to="/properties">Properties</Link>
+                <Link to="/properties" className="text-muted text-decoration-none">Properties</Link>
               </li>
               <li>
-                <Link to="/login">Login</Link>
+                <Link to="/login" className="text-muted text-decoration-none">Login</Link>
               </li>
               <li>
-                <Link to="/register">Register</Link>
-              </li>
-            </ul>
-          </div>
-          
-          <div className="footer-section">
-            <h3>Property Types</h3>
-            <ul className="footer-links">
-              <li>
-                <Link to="/properties">Houses</Link>
-              </li>
-              <li>
-                <Link to="/properties">Apartments</Link>
-              </li>
-              <li>
-                <Link to="/properties">Condos</Link>
-              </li>
-              <li>
-                <Link to="/properties">Land</Link>
+                <Link to="/register" className="text-muted text-decoration-none">Register</Link>
               </li>
             </ul>
           </div>
-          
-          <div className="footer-section">
-            <h3>Contact Us</h3>
-            <p>123 Real Estate Street</p>
-            <p>Property City, PC 12345</p>
-            <p>Phone: (123) 456-7890</p>
-            <p>Email: info@realestatefinder.com</p>
+
+          {/* Property Types */}
+          <div className="col-md-3">
+            <h5 className="text-uppercase fw-bold">Property Types</h5>
+            <ul className="list-unstyled">
+              <li>
+                <Link to="/properties" className="text-muted text-decoration-none">Houses</Link>
+              </li>
+              <li>
+                <Link to="/properties" className="text-muted text-decoration-none">Apartments</Link>
+              </li>
+              <li>
+                <Link to="/properties" className="text-muted text-decoration-none">Condos</Link>
+              </li>
+              <li>
+                <Link to="/properties" className="text-muted text-decoration-none">Land</Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Contact Us */}
+          <div className="col-md-3">
+            <h5 className="text-uppercase fw-bold">Contact Us</h5>
+            <p className="text-muted mb-1">123 Real Estate Street</p>
+            <p className="text-muted mb-1">Property City, PC 12345</p>
+            <p className="text-muted mb-1">Phone: (123) 456-7890</p>
+            <p className="text-muted">Email: info@realestatefinder.com</p>
           </div>
         </div>
-        
-        <div className="footer-bottom">
-          <p>&copy; {currentYear} RealEstate Finder. All rights reserved.</p>
+
+        <div className="text-center mt-4">
+          <p className="text-muted mb-0">
+            &copy; {currentYear} RealEstate Finder. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>

@@ -16,61 +16,88 @@ const Home = () => {
 
   return (
     <div className="home">
-      <div className="hero">
-        <div className="container">
-          <h1>Find Your Dream Home</h1>
-          <p>Browse our selection of quality properties</p>
-          <Link to="/properties" className="btn btn-primary">
+      {/* Hero Section */}
+      <div className="hero text-white py-5" style={{ background: 'linear-gradient(90deg,rgb(15, 22, 29),rgb(24, 19, 33))' }}>
+        <div className="container text-center">
+          <h1 className="display-4 fw-bold">Find Your Dream Home</h1>
+          <p className="lead">Browse our selection of quality properties</p>
+          <Link to="/properties" className="btn btn-light btn-lg mt-3">
             View Properties
           </Link>
         </div>
       </div>
 
-      <section className="featured-properties">
+      {/* Featured Properties Section */}
+      <section className="featured-properties py-5">
         <div className="container">
-          <h2>Featured Properties</h2>
-          <p>Explore our handpicked selection of featured properties</p>
-          
+          <h2 className="text-center mb-4">Featured Properties</h2>
+          <p className="text-center text-muted mb-5">
+            Explore our handpicked selection of featured properties
+          </p>
+
           {loading ? (
-            <div className="loading">Loading...</div>
+            <div className="d-flex justify-content-center">
+              <div className="spinner-border text-primary" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </div>
+            </div>
           ) : (
-            <div className="property-grid">
-              {recentProperties.map(property => (
-                <PropertyCard 
-                  key={property.id} 
-                  property={property}
-                  saved={false}
-                />
+            <div className="row g-4">
+              {recentProperties.map((property) => (
+                <div className="col-md-4" key={property.id}>
+                  <div className="card shadow-sm h-100">
+                    <PropertyCard property={property} saved={false} />
+                  </div>
+                </div>
               ))}
             </div>
           )}
-          
-          <div className="text-center mt-4">
-            <Link to="/properties" className="btn btn-secondary">
+
+          <div className="text-center mt-5">
+            <Link to="/properties" className="btn btn-outline-primary btn-lg">
               View All Properties
             </Link>
           </div>
         </div>
       </section>
 
-      <section className="features">
+      {/* Features Section */}
+      <section className="features py-5" style={{ backgroundColor: '#f8f9fa' }}>
         <div className="container">
-          <h2>Why Choose Us</h2>
-          <div className="features-grid">
-            <div className="feature">
-              <div className="feature-icon">🏠</div>
-              <h3>Wide Range of Properties</h3>
-              <p>From apartments to family homes, we have properties to suit every need and budget.</p>
+          <h2 className="text-center mb-4">Why Choose Us</h2>
+          <div className="row g-4">
+            <div className="col-md-4">
+              <div className="card text-center shadow-sm h-100">
+                <div className="card-body">
+                  <div className="feature-icon display-4 text-primary">🏠</div>
+                  <h3 className="mt-3">Wide Range of Properties</h3>
+                  <p className="text-muted">
+                    From apartments to family homes, we have properties to suit every need and budget.
+                  </p>
+                </div>
+              </div>
             </div>
-            <div className="feature">
-              <div className="feature-icon">💰</div>
-              <h3>Best Price Guarantee</h3>
-              <p>We ensure you get the best deal for your dream property.</p>
+            <div className="col-md-4">
+              <div className="card text-center shadow-sm h-100">
+                <div className="card-body">
+                  <div className="feature-icon display-4 text-primary">💰</div>
+                  <h3 className="mt-3">Best Price Guarantee</h3>
+                  <p className="text-muted">
+                    We ensure you get the best deal for your dream property.
+                  </p>
+                </div>
+              </div>
             </div>
-            <div className="feature">
-              <div className="feature-icon">👨‍💼</div>
-              <h3>Expert Agents</h3>
-              <p>Our professional agents will guide you through every step of your journey.</p>
+            <div className="col-md-4">
+              <div className="card text-center shadow-sm h-100">
+                <div className="card-body">
+                  <div className="feature-icon display-4 text-primary">👨‍💼</div>
+                  <h3 className="mt-3">Expert Agents</h3>
+                  <p className="text-muted">
+                    Our professional agents will guide you through every step of your journey.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
