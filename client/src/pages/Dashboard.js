@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
 import PropertyContext from '../context/PropertyContext';
+//import "./Dashboard.css";
 
 const Dashboard = () => {
-  const { user, updateProfile } = useContext(AuthContext);
+  const { user, updateProfile, logout } = useContext(AuthContext);
   const { savedProperties, myProperties, getSavedProperties, getMyProperties } = useContext(PropertyContext);
   const [profileData, setProfileData] = useState({
     name: '',
@@ -12,6 +13,7 @@ const Dashboard = () => {
     password: ''
   });
   const [profileUpdated, setProfileUpdated] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {
@@ -57,118 +59,146 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="dashboard">
-      <div className="container">
+    <div className="dashboard-layout">
+      {/* Sidebar */}
+      <aside className="dashboard-sidebar">
+        <div className="sidebar-profile">
+          <img
+            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=34dbb4&color=fff`}
+            alt="Profile"
+            className="sidebar-profile-img"
+          />
+          <div className="sidebar-profile-name">{user.name}</div>
+          <div className="sidebar-profile-email">{user.email}</div>
+        </div>
+        <nav className="sidebar-nav">
+          <ul>
+            <li className="active"><Link to="/dashboard">Dashboard</Link></li>
+            <li><Link to="/saved-properties">Saved Properties</Link></li>
+            {(user.role === 'agent' || user.role === 'admin') && (
+              <li><Link to="/my-properties">My Properties</Link></li>
+            )}
+            {(user.role === 'agent' || user.role === 'admin') && (
+              <li><Link to="/create-property">Add Property</Link></li>
+            )}
+            <li>
+              <button className="logout-btn-modern" onClick={() => { logout(); navigate('/login'); }}>
+                <span role="img" aria-label="logout">🚪</span> Logout
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+
+      {/* Main Content */}
+      <main className="dashboard-main">
         <h1>Dashboard</h1>
         <p>Welcome, {user.name}!</p>
-        
-        <div className="dashboard-grid">
-          <div className="dashboard-sidebar">
-            <div className="profile-section">
-              <h2>Your Profile</h2>
-              {profileUpdated && (
-                <div className="alert alert-success">Profile updated successfully!</div>
-              )}
-              <form onSubmit={handleProfileSubmit}>
-                <div className="form-group">
-                  <label htmlFor="name">Name</label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={profileData.name}
-                    onChange={handleProfileChange}
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="email">Email</label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={profileData.email}
-                    onChange={handleProfileChange}
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="password">New Password (leave blank to keep current)</label>
-                  <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    value={profileData.password}
-                    onChange={handleProfileChange}
-                  />
-                </div>
-                <button type="submit" className="btn btn-primary">
-                  Update Profile
-                </button>
-              </form>
-            </div>
-          </div>
-          
-          <div className="dashboard-content">
-            <div className="stats-section">
-              <div className="stat-card">
-                <h3>Saved Properties</h3>
-                <p className="stat-value">{savedProperties.length}</p>
-                <Link to="/saved-properties" className="btn btn-outline">View All</Link>
+        <div className="dashboard-content-grid">
+          {/* Profile Section */}
+          <section className="profile-section">
+            <h2>Your Profile</h2>
+            {profileUpdated && (
+              <div className="alert alert-success">Profile updated successfully!</div>
+            )}
+            <form onSubmit={handleProfileSubmit}>
+              <div className="form-group">
+                <label htmlFor="name">Name</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={profileData.name}
+                  onChange={handleProfileChange}
+                  required
+                />
               </div>
-              
-              {(user.role === 'agent' || user.role === 'admin') && (
-                <>
-                  <div className="stat-card">
-                    <h3>Your Listings</h3>
-                    <p className="stat-value">{myProperties.length}</p>
-                    <Link to="/my-properties" className="btn btn-outline">View All</Link>
-                  </div>
-                  <div className="stat-card">
-                    <h3>Add New Listing</h3>
-                    <p className="stat-description">Create a new property listing</p>
-                    <Link to="/create-property" className="btn btn-primary">Add Property</Link>
-                  </div>
-                </>
-              )}
+              <div className="form-group">
+                <label htmlFor="email">Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={profileData.email}
+                  onChange={handleProfileChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="password">New Password (leave blank to keep current)</label>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  value={profileData.password}
+                  onChange={handleProfileChange}
+                />
+              </div>
+              <button type="submit" className="btn btn-primary">
+                Update Profile
+              </button>
+            </form>
+            {/* New Card Below Profile Update */}
+            <div className="profile-extra-card">
+              <h3>Account Status</h3>
+              <p><b>Role:</b> {user.role}</p>
+              <p><b>Member since:</b> {user.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}</p>
+              {/* Add more info if needed */}
             </div>
-            
-            <div className="recent-section">
-              <h2>Recently Saved Properties</h2>
-              {savedProperties.length === 0 ? (
-                <p>You haven't saved any properties yet.</p>
-              ) : (
-                <div className="saved-properties-list">
-                  {savedProperties.slice(0, 3).map(property => (
-                    <div key={property.id} className="saved-property-card">
-                      <div className="saved-property-image">
-                        {property.primary_image ? (
-                          <img src={property.primary_image} alt={property.title} />
-                        ) : (
-                          <div className="no-image">No Image</div>
-                        )}
-                      </div>
-                      <div className="saved-property-info">
-                        <h3>{property.title}</h3>
-                        <p className="saved-property-price">${property.price.toLocaleString()}</p>
-                        <p>{property.city}, {property.state}</p>
-                        <Link to={`/properties/${property.id}`} className="btn btn-sm">
-                          View Details
-                        </Link>
-                      </div>
+          </section>
+
+          {/* Stats Section */}
+          <section className="stats-section">
+            <div className="stat-card">
+              <h3>Saved Properties</h3>
+              <p className="stat-value">{savedProperties.length}</p>
+              <Link to="/saved-properties" className="btn btn-outline">View All</Link>
+            </div>
+            {(user.role === 'agent' || user.role === 'admin') && (
+              <div className="stat-card">
+                <h3>Your Listings</h3>
+                <p className="stat-value">{myProperties.length}</p>
+                <Link to="/my-properties" className="btn btn-outline">View All</Link>
+              </div>
+            )}
+          </section>
+
+          {/* Recently Saved Properties */}
+          <section className="recent-section">
+            <h2>Recently Saved Properties</h2>
+            {savedProperties.length === 0 ? (
+              <p>You haven't saved any properties yet.</p>
+            ) : (
+              <div className="saved-properties-list">
+                {savedProperties.slice(0, 3).map(property => (
+                  <div key={property.id} className="saved-property-card">
+                    <div className="saved-property-image">
+                      {property.primary_image ? (
+                        <img src={property.primary_image} alt={property.title} />
+                      ) : (
+                        <div className="no-image">No Image</div>
+                      )}
                     </div>
-                  ))}
-                  {savedProperties.length > 3 && (
-                    <Link to="/saved-properties" className="btn btn-outline">
-                      View All Saved Properties
-                    </Link>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
+                    <div className="saved-property-info">
+                      <h3>{property.title}</h3>
+                      <p className="saved-property-price">${property.price.toLocaleString()}</p>
+                      <p>{property.city}, {property.state}</p>
+                      <Link to={`/properties/${property.id}`} className="btn btn-sm">
+                        View Details
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+                {savedProperties.length > 3 && (
+                  <Link to="/saved-properties" className="btn btn-outline">
+                    View All Saved Properties
+                  </Link>
+                )}
+              </div>
+            )}
+          </section>
         </div>
-      </div>
+      </main>
     </div>
   );
 };

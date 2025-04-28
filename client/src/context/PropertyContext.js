@@ -53,13 +53,26 @@ export const PropertyProvider = ({ children }) => {
   // Create property
   const createProperty = async (formData) => {
     setLoading(true);
+    setError(null);
     try {
+      console.log('Sending property data to server:', formData);
       const res = await axios.post('/api/properties', formData);
+      console.log('Server response:', res.data);
       setMyProperties([res.data, ...myProperties]);
       setLoading(false);
       return res.data;
     } catch (err) {
-      setError(err.response?.data.msg || 'Error creating property');
+      console.error('Error in createProperty:', err);
+      if (err.response) {
+        console.error('Server response:', err.response.data);
+        setError(err.response.data.msg || 'Error creating property');
+      } else if (err.request) {
+        console.error('No response received:', err.request);
+        setError('No response from server. Please try again later.');
+      } else {
+        console.error('Error setting up request:', err.message);
+        setError('Error setting up request. Please try again.');
+      }
       setLoading(false);
       return null;
     }
