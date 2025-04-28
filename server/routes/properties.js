@@ -122,6 +122,8 @@ router.get('/:id', async (req, res) => {
 // @desc    Create a property
 // @access  Private
 router.post('/', auth, async (req, res) => {
+    console.log('Auth middleware passed, user:', req.user);
+    
     const {
       title,
       description,
@@ -139,6 +141,24 @@ router.post('/', auth, async (req, res) => {
       longitude,
       images
     } = req.body;
+
+    console.log('Received property creation request with data:', {
+      title,
+      description,
+      price,
+      bedrooms,
+      bathrooms,
+      square_feet,
+      property_type,
+      status,
+      address,
+      city,
+      state,
+      zip_code,
+      latitude,
+      longitude,
+      images: images ? images.length : 0
+    });
   
     try {
       // Check if user is a realtor
@@ -147,8 +167,56 @@ router.post('/', auth, async (req, res) => {
         [req.user.id]
       );
   
+      if (user.rows.length === 0) {
+        console.log('User not found:', req.user.id);
+        return res.status(401).json({ msg: 'User not found' });
+      }
+  
+      console.log('User role:', user.rows[0].role);
+      
       if (user.rows[0].role !== 'agent' && user.rows[0].role !== 'admin') {
-        return res.status(403).json({ msg: 'Only agents can create property listings' });
+        console.log('User not authorized:', req.user.id, user.rows[0].role);
+        return res.status(403).json({ 
+          msg: 'Only agents can create property listings',
+          userRole: user.rows[0].role
+        });
+      }
+  
+      // Validate required fields
+      const requiredFields = {
+        title, description, price, bedrooms, bathrooms, square_feet,
+        property_type, status, address, city, state, zip_code
+      };
+      
+      const missingFields = Object.entries(requiredFields)
+        .filter(([_, value]) => !value)
+        .map(([key]) => key);
+      
+      if (missingFields.length > 0) {
+        console.log('Missing required fields:', missingFields);
+        return res.status(400).json({ 
+          msg: 'All required fields must be provided',
+          missingFields 
+        });
+      }
+
+      // Validate numeric fields
+      const numericFields = {
+        price: parseFloat(price),
+        bedrooms: parseInt(bedrooms),
+        bathrooms: parseFloat(bathrooms),
+        square_feet: parseInt(square_feet)
+      };
+
+      for (const [field, value] of Object.entries(numericFields)) {
+        if (isNaN(value)) {
+          console.log(`Invalid numeric value for ${field}:`, price);
+          return res.status(400).json({ 
+            msg: `Invalid value for ${field}`,
+            field,
+            value: req.body[field]
+          });
+        }
       }
   
       // Create property
@@ -159,7 +227,8 @@ router.post('/', auth, async (req, res) => {
           latitude, longitude, user_id
         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING *`,
         [
-          title, description, price, bedrooms, bathrooms, square_feet,
+          title, description, numericFields.price, numericFields.bedrooms, 
+          numericFields.bathrooms, numericFields.square_feet,
           property_type, status, address, city, state, zip_code,
           latitude, longitude, req.user.id
         ]
@@ -183,8 +252,28 @@ router.post('/', auth, async (req, res) => {
   
       res.json(property.rows[0]);
     } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Server error');
+      console.error('Error creating property:', {
+        message: err.message,
+        code: err.code,
+        detail: err.detail,
+        hint: err.hint,
+        stack: err.stack
+      });
+      
+      if (err.code === '23505') { // Unique violation
+        res.status(400).json({ msg: 'A property with this title already exists' });
+      } else if (err.code === '23514') { // Check violation
+        res.status(400).json({ msg: 'Invalid data provided. Please check your input values.' });
+      } else if (err.code === '22P02') { // Invalid text representation
+        res.status(400).json({ msg: 'Invalid data format. Please check your input values.' });
+      } else {
+        res.status(500).json({ 
+          msg: 'Server error while creating property',
+          error: err.message,
+          code: err.code,
+          detail: err.detail
+        });
+      }
     }
   });
 

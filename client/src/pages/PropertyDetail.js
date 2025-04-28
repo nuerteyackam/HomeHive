@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import PropertyContext from '../context/PropertyContext';
 import AuthContext from '../context/AuthContext';
 import { FaBed, FaBath, FaRuler, FaMapMarkerAlt, FaHeart, FaRegHeart } from 'react-icons/fa';
@@ -10,7 +10,7 @@ import "slick-carousel/slick/slick-theme.css";
 const PropertyDetail = () => {
   const { id } = useParams();
   const { property, getPropertyById, loading, saveProperty, removeSavedProperty, savedProperties, getSavedProperties, createEnquiry } = useContext(PropertyContext);
-  const { isAuthenticated, user } = useContext(AuthContext);
+  const { isAuthenticated } = useContext(AuthContext);
   const [isSaved, setIsSaved] = useState(false);
   const [enquiryData, setEnquiryData] = useState({
     name: '',

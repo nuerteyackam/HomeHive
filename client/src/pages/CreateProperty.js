@@ -46,24 +46,33 @@ const CreateProperty = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Convert numeric fields from strings to numbers
-    const propertyData = {
-      ...formData,
-      price: parseFloat(formData.price),
-      bedrooms: parseInt(formData.bedrooms),
-      bathrooms: parseFloat(formData.bathrooms),
-      square_feet: parseInt(formData.square_feet),
-      // Filter out empty image URLs
-      images: formData.images.filter(url => url.trim() !== '')
-    };
-    
-    // Add coordinates if provided
-    if (formData.latitude) propertyData.latitude = parseFloat(formData.latitude);
-    if (formData.longitude) propertyData.longitude = parseFloat(formData.longitude);
-    
-    const property = await createProperty(propertyData);
-    if (property) {
-      navigate(`/properties/${property.id}`);
+    try {
+      // Convert numeric fields from strings to numbers
+      const propertyData = {
+        ...formData,
+        price: parseFloat(formData.price),
+        bedrooms: parseInt(formData.bedrooms),
+        bathrooms: parseFloat(formData.bathrooms),
+        square_feet: parseInt(formData.square_feet),
+        // Filter out empty image URLs
+        images: formData.images.filter(url => url.trim() !== '')
+      };
+      
+      // Add coordinates if provided
+      if (formData.latitude) propertyData.latitude = parseFloat(formData.latitude);
+      if (formData.longitude) propertyData.longitude = parseFloat(formData.longitude);
+      
+      console.log('Submitting property data:', propertyData);
+      
+      const property = await createProperty(propertyData);
+      if (property) {
+        navigate(`/properties/${property.id}`);
+      }
+    } catch (err) {
+      console.error('Error creating property:', err);
+      if (err.response) {
+        console.error('Server response:', err.response.data);
+      }
     }
   };
 
