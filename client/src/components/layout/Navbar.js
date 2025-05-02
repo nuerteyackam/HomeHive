@@ -11,6 +11,14 @@ const Navbar = () => {
     navigate('/');
   };
 
+  // Debug information
+  console.log('Navbar Debug:', {
+    isAuthenticated,
+    user,
+    userRole: user?.role,
+    shouldShowAnalytics: user && (user.role === 'user' || user.role === 'agent' || user.role === 'admin')
+  });
+
   const authLinks = (
     <>
       <li className="nav-item">
@@ -28,6 +36,11 @@ const Navbar = () => {
             <Link to="/enquiries" className="nav-link">Enquiries</Link>
           </li>
         </>
+      )}
+      {user && (user.role === 'user'  || user.role === 'agent' || user.role === 'admin') && (
+        <li className="nav-item">
+          <Link to="/analytics" className="nav-link">Analytics</Link>
+        </li>
       )}
       <li className="nav-item">
         <button onClick={onLogout} className="btn btn-link nav-link">

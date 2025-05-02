@@ -18,7 +18,7 @@ const CreateProperty = () => {
     zip_code: '',
     latitude: '',
     longitude: '',
-    images: [''] // Start with one empty image field
+    images: [''] // Start with one empty image fieldlets update
   });
 
   const { createProperty, error } = useContext(PropertyContext);
