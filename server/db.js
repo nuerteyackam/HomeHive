@@ -7,18 +7,13 @@ const pool = new Pool({
     connectionString: connectionString,
 });
 
-async () =>{
-    try{
-        const connect = await pool.connect();
-        console.log('Connected to the database');
-    }
-    catch(err){
+// Test the connection
+pool.connect()
+    .then(() => console.log('Connected to the database'))
+    .catch((err) => {
         console.error('Error connecting to the database', err);
-    }
-    finally{
-        pool.end();
-    }
-}
+        process.exit(1); // Exit the process if the database connection fails
+    });
 
 module.exports = pool;
 
