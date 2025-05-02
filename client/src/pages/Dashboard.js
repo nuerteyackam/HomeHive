@@ -93,6 +93,9 @@ const Dashboard = () => {
             {(user.role === 'agent' || user.role === 'admin') && (
               <li><Link to="/create-property">Add Property</Link></li>
             )}
+            {user.role === 'admin' && (
+              <li><Link to="/admin">User Management</Link></li>
+            )}
             <li>
               <button className="logout-btn-modern" onClick={() => { logout(); navigate('/login'); }}>
                 <span role="img" aria-label="logout">🚪</span> Logout

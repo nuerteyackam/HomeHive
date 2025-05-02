@@ -22,6 +22,7 @@ import CreateProperty from './pages/CreateProperty';
 import EditProperty from './pages/EditProperty';
 import Enquiries from './pages/Enquiries';
 import Analytics from './pages/Analytics';
+import Admin from './pages/Admin';
 import NotFound from './pages/NotFound';
 
 // CSS
@@ -69,6 +70,10 @@ function App() {
                 <Route
                   path="/analytics"
                   element={<PrivateRoute component={Analytics} />}
+                />
+                <Route
+                  path="/admin"
+                  element={<PrivateRoute component={Admin} />}
                 />
                 <Route path="*" element={<NotFound />} />
               </Routes>
