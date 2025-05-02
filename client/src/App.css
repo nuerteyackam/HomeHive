@@ -2120,6 +2120,7 @@ p {
   line-height: 1.2;
   background: linear-gradient(135deg, var(--teal), var(--orange));
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
