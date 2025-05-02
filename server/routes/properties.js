@@ -595,60 +595,6 @@ router.delete('/admin/:id', [auth, adminAuth], async (req, res) => {
   }
 });
 
-// @route   GET api/properties/admin/stats
-// @desc    Get property statistics for admin dashboard
-// @access  Admin only
-router.get('/admin/stats', adminAuth, async (req, res) => {
-  try {
-    // Get general property statistics
-    const generalStats = await pool.query(`
-      SELECT 
-        COUNT(*) as total_properties,
-        COUNT(CASE WHEN status = 'available' THEN 1 END) as available_properties,
-        COUNT(CASE WHEN status = 'sold' THEN 1 END) as sold_properties,
-        COUNT(CASE WHEN status = 'pending' THEN 1 END) as pending_properties,
-        COUNT(CASE WHEN status = 'rented' THEN 1 END) as rented_properties,
-        COUNT(CASE WHEN featured = true THEN 1 END) as featured_properties,
-        COUNT(CASE WHEN verification_status = 'pending' THEN 1 END) as pending_verification,
-        COUNT(CASE WHEN verification_status = 'verified' THEN 1 END) as verified_properties,
-        COUNT(CASE WHEN verification_status = 'rejected' THEN 1 END) as rejected_properties,
-        ROUND(AVG(price)::numeric, 2) as average_price
-      FROM properties
-    `);
-
-    // Get property type distribution
-    const propertyTypes = await pool.query(`
-      SELECT 
-        property_type,
-        COUNT(*) as count
-      FROM properties
-      GROUP BY property_type
-      ORDER BY count DESC
-    `);
-
-    // Get monthly listing trends (last 6 months)
-    const monthlyTrends = await pool.query(`
-      SELECT 
-        DATE_TRUNC('month', created_at) as month,
-        COUNT(*) as new_listings,
-        COUNT(CASE WHEN status = 'sold' THEN 1 END) as sold_properties
-      FROM properties
-      WHERE created_at >= NOW() - INTERVAL '6 months'
-      GROUP BY DATE_TRUNC('month', created_at)
-      ORDER BY month DESC
-    `);
-
-    res.json({
-      general_stats: generalStats.rows[0],
-      property_types: propertyTypes.rows,
-      monthly_trends: monthlyTrends.rows
-    });
-  } catch (err) {
-    console.error('Error fetching property stats:', err);
-    res.status(500).json({ msg: 'Server error while fetching property statistics' });
-  }
-});
-
 // @route   PUT api/properties/admin/:id
 // @desc    Update property (admin full update)
 // @access  Private/Admin

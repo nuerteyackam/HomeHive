@@ -1,19 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import PropertyStats from './PropertyStats';
 
 const PropertyManagement = () => {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editingProperty, setEditingProperty] = useState(null);
-  const [stats, setStats] = useState(null);
-  const [viewMode, setViewMode] = useState('list'); // list, edit, stats
+  const [viewMode, setViewMode] = useState('list'); // list, edit
   const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     fetchProperties();
-    fetchStats();
   }, []);
 
   // Clear success message after 3 seconds
@@ -35,16 +32,6 @@ const PropertyManagement = () => {
     } catch (err) {
       setError('Error fetching properties');
       setLoading(false);
-    }
-  };
-
-  const fetchStats = async () => {
-    try {
-      const res = await axios.get('/api/properties/admin/stats');
-      setStats(res.data);
-      setError(null);
-    } catch (err) {
-      setError('Error fetching property stats');
     }
   };
 
@@ -185,23 +172,9 @@ const PropertyManagement = () => {
 
   return (
     <div className="property-management">
-      {/* View Mode Controls */}
+      {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>Property Management</h2>
-        <div className="btn-group">
-          <button
-            className={`btn ${viewMode === 'list' ? 'btn-primary' : 'btn-outline-primary'}`}
-            onClick={() => setViewMode('list')}
-          >
-            List View
-          </button>
-          <button
-            className={`btn ${viewMode === 'stats' ? 'btn-primary' : 'btn-outline-primary'}`}
-            onClick={() => setViewMode('stats')}
-          >
-            Statistics
-          </button>
-        </div>
       </div>
 
       {/* Messages */}
@@ -402,7 +375,6 @@ const PropertyManagement = () => {
           </form>
         </div>
       )}
-      {viewMode === 'stats' && <PropertyStats stats={stats} />}
     </div>
   );
 };
