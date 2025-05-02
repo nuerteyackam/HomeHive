@@ -8,6 +8,7 @@ import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import Alert from './components/layout/Alert';
 import PrivateRoute from './components/routing/PrivateRoute';
+import AdminRoute from './components/routing/AdminRoute';
 
 // Pages
 import Home from './pages/Home';
@@ -24,6 +25,7 @@ import Enquiries from './pages/Enquiries';
 import Analytics from './pages/Analytics';
 import Admin from './pages/Admin';
 import NotFound from './pages/NotFound';
+import PropertyManagement from './components/admin/PropertyManagement';
 
 // CSS
 import './App.css';
@@ -73,7 +75,11 @@ function App() {
                 />
                 <Route
                   path="/admin"
-                  element={<PrivateRoute component={Admin} />}
+                  element={<AdminRoute component={Admin} />}
+                />
+                <Route
+                  path="/admin/properties"
+                  element={<AdminRoute component={PropertyManagement} />}
                 />
                 <Route path="*" element={<NotFound />} />
               </Routes>

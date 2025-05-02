@@ -1,34 +1,29 @@
 {
   "name": "homehive",
   "version": "1.0.0",
-  "description": " A platform for real estate listings, connecting buyers and sellers.",
-  "main": "index.js",
+  "description": "A modern real estate platform",
+  "main": "server/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server/server.js",
+    "server": "nodemon server/server.js",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "build": "cd client && npm install && npm run build",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/nuerteyackam/HomeHive.git"
+  "engines": {
+    "node": ">=14.0.0"
   },
-  "keywords": [
-    "real",
-    "estate",
-    "listings",
-    "property",
-    "homes",
-    "apartments",
-    "rentals",
-    "sales"
-  ],
-  "author": "HomeHive",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/nuerteyackam/HomeHive/issues"
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "pg": "^8.10.0"
   },
-  "homepage": "https://github.com/nuerteyackam/HomeHive#readme",
   "devDependencies": {
-    "autoprefixer": "^10.4.21",
-    "postcss": "^8.5.3",
-    "tailwindcss": "^4.1.4"
+    "concurrently": "^8.0.1",
+    "nodemon": "^2.0.22"
   }
 }

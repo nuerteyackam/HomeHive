@@ -6,7 +6,7 @@ import axios from 'axios';
 //import "./Dashboard.css";
 
 const Dashboard = () => {
-  const { user, updateProfile, logout } = useContext(AuthContext);
+  const { user, updateProfile, logout, loading } = useContext(AuthContext);
   const { savedProperties, myProperties, getSavedProperties, getMyProperties } = useContext(PropertyContext);
   const [savedAnalyses, setSavedAnalyses] = useState([]);
   const [profileData, setProfileData] = useState({
@@ -18,6 +18,12 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Redirect to login if not authenticated after loading
+    if (!loading && !user) {
+      navigate('/login');
+      return;
+    }
+
     if (user) {
       setProfileData({
         name: user.name,
@@ -34,15 +40,14 @@ const Dashboard = () => {
         }
       };
       fetchAnalyses();
+      
+      getSavedProperties();
+      
+      if (user.role === 'agent' || user.role === 'admin') {
+        getMyProperties();
+      }
     }
-    
-    getSavedProperties();
-    
-    if (user && (user.role === 'agent' || user.role === 'admin')) {
-      getMyProperties();
-    }
-    // eslint-disable-next-line
-  }, [user]);
+  }, [user, loading, navigate, getSavedProperties, getMyProperties]);
 
   const handleProfileChange = (e) => {
     setProfileData({ ...profileData, [e.target.name]: e.target.value });
@@ -66,9 +71,12 @@ const Dashboard = () => {
     }
   };
 
-  if (!user) {
+  if (loading || !user) {
     return <div className="loading">Loading...</div>;
   }
+
+  const isAgent = user.role === 'agent';
+  const isAdmin = user.role === 'admin';
 
   return (
     <div className="dashboard-layout">
@@ -87,14 +95,17 @@ const Dashboard = () => {
           <ul>
             <li className="active"><Link to="/dashboard">Dashboard</Link></li>
             <li><Link to="/saved-properties">Saved Properties</Link></li>
-            {(user.role === 'agent' || user.role === 'admin') && (
+            {(isAgent || isAdmin) && (
               <li><Link to="/my-properties">My Properties</Link></li>
             )}
-            {(user.role === 'agent' || user.role === 'admin') && (
+            {(isAgent || isAdmin) && (
               <li><Link to="/create-property">Add Property</Link></li>
             )}
-            {user.role === 'admin' && (
-              <li><Link to="/admin">User Management</Link></li>
+            {isAdmin && (
+              <>
+                <li><Link to="/admin">User Management</Link></li>
+                <li><Link to="/admin/properties">Property Management</Link></li>
+              </>
             )}
             <li>
               <button className="logout-btn-modern" onClick={() => { logout(); navigate('/login'); }}>
@@ -169,7 +180,7 @@ const Dashboard = () => {
               <p className="stat-value">{savedProperties.length}</p>
               <Link to="/saved-properties" className="btn btn-outline">View All</Link>
             </div>
-            {(user.role === 'agent' || user.role === 'admin') && (
+            {(isAgent || isAdmin) && (
               <div className="stat-card">
                 <h3>Your Listings</h3>
                 <p className="stat-value">{myProperties.length}</p>

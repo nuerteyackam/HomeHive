@@ -2683,32 +2683,31 @@ p {
 
 /* Admin Page Styles */
 .admin-dashboard {
-  padding: 2rem 0;
+  padding: 20px;
+  background-color: var(--main-bg);
 }
 
 .admin-dashboard .nav-tabs {
-  border-bottom: 2px solid #dee2e6;
+  border-bottom: 2px solid var(--border-color);
   margin-bottom: 2rem;
 }
 
 .admin-dashboard .nav-tabs .nav-link {
   border: none;
-  color: #6c757d;
+  color: var(--text-color);
   padding: 0.75rem 1.5rem;
   font-weight: 500;
-  transition: all 0.3s ease;
+  transition: var(--transition);
 }
 
 .admin-dashboard .nav-tabs .nav-link:hover {
-  color: #0d6efd;
-  border: none;
+  color: var(--secondary-color);
 }
 
 .admin-dashboard .nav-tabs .nav-link.active {
-  color: #0d6efd;
-  border: none;
-  border-bottom: 2px solid #0d6efd;
-  margin-bottom: -2px;
+  color: var(--secondary-color);
+  border-bottom: 2px solid var(--secondary-color);
+  background: transparent;
 }
 
 .admin-dashboard .table {
@@ -2792,4 +2791,181 @@ p {
 
 .admin-dashboard .card-body {
   padding: 1.25rem;
+}
+
+/* Property Management Styles */
+.property-management {
+  background-color: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+}
+
+.stats-card {
+  background-color: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+  border: none;
+  height: 100%;
+}
+
+.stats-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(44, 62, 80, 0.12);
+}
+
+.stats-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+}
+
+.stats-label {
+  color: var(--text-color);
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.property-table {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.property-table th {
+  background-color: var(--light-color);
+  color: var(--text-dark);
+  font-weight: 600;
+  padding: 1rem;
+}
+
+.property-table td {
+  padding: 1rem;
+  vertical-align: middle;
+}
+
+.status-select {
+  min-width: 140px;
+  padding: 0.5rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-color);
+}
+
+.featured-checkbox {
+  width: 1.25rem;
+  height: 1.25rem;
+  cursor: pointer;
+}
+
+.property-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.property-actions button {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  border-radius: var(--radius);
+}
+
+.verification-pending {
+  color: var(--warning-color);
+}
+
+.verification-verified {
+  color: var(--success-color);
+}
+
+.verification-rejected {
+  color: var(--danger-color);
+}
+
+.price-column {
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.agent-card {
+  background-color: var(--light-color);
+  border-radius: var(--radius);
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-left: 4px solid var(--secondary-color);
+}
+
+.agent-stats {
+  font-size: 0.875rem;
+  color: var(--text-color);
+  opacity: 0.8;
+}
+
+.edit-form {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+}
+
+.edit-form label {
+  font-weight: 500;
+  color: var(--text-dark);
+  margin-bottom: 0.5rem;
+}
+
+.edit-form input,
+.edit-form select,
+.edit-form textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  transition: var(--transition);
+}
+
+.edit-form input:focus,
+.edit-form select:focus,
+.edit-form textarea:focus {
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+.error-message {
+  background-color: var(--danger-color);
+  color: white;
+  padding: 1rem;
+  border-radius: var(--radius);
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+  .property-management {
+    padding: 1rem;
+  }
+  
+  .property-table {
+    font-size: 0.875rem;
+  }
+  
+  .property-actions {
+    flex-direction: column;
+  }
+  
+  .stats-card {
+    margin-bottom: 1rem;
+  }
+  
+  .status-select {
+    min-width: 120px;
+  }
 } 

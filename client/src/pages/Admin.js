@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import PropertyManagement from '../components/admin/PropertyManagement';
 
 const Admin = () => {
   const [users, setUsers] = useState([]);
@@ -108,6 +109,14 @@ const Admin = () => {
             onClick={() => setActiveTab('users')}
           >
             User Management
+          </button>
+        </li>
+        <li className="nav-item">
+          <button
+            className={`nav-link ${activeTab === 'properties' ? 'active' : ''}`}
+            onClick={() => setActiveTab('properties')}
+          >
+            Property Management
           </button>
         </li>
         <li className="nav-item">
@@ -252,28 +261,37 @@ const Admin = () => {
         </div>
       )}
 
+      {activeTab === 'properties' && <PropertyManagement />}
+
       {activeTab === 'logs' && (
-        <div className="table-responsive">
-          <table className="table table-striped">
-            <thead>
-              <tr>
-                <th>User</th>
-                <th>Action</th>
-                <th>Details</th>
-                <th>Timestamp</th>
-              </tr>
-            </thead>
-            <tbody>
-              {activityLogs.map((log) => (
-                <tr key={log.id}>
-                  <td>{log.user_name}</td>
-                  <td>{log.action}</td>
-                  <td>{log.details}</td>
-                  <td>{new Date(log.created_at).toLocaleString()}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="card">
+          <div className="card-header">
+            <h5 className="mb-0">Activity Logs</h5>
+          </div>
+          <div className="card-body">
+            <div className="table-responsive">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Details</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {activityLogs.map((log) => (
+                    <tr key={log.id}>
+                      <td>{log.user_name}</td>
+                      <td>{log.action}</td>
+                      <td>{log.details}</td>
+                      <td>{new Date(log.created_at).toLocaleString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       )}
 
