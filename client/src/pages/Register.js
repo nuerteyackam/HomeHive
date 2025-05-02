@@ -8,7 +8,7 @@ const Register = () => {
     email: '',
     password: '',
     password2: '',
-    role: 'user', // Default role is 'user'
+    role: 'user', // Default role is 'user'/Reviewd the code
   });
   const [passwordError, setPasswordError] = useState('');
   const { register, isAuthenticated, error, clearError } = useContext(AuthContext);
