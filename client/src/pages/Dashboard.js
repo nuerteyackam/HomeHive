@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
 import PropertyContext from '../context/PropertyContext';
@@ -17,6 +17,16 @@ const Dashboard = () => {
   const [profileUpdated, setProfileUpdated] = useState(false);
   const navigate = useNavigate();
 
+  // Memoize fetchAnalyses to prevent recreation on every render
+  const fetchAnalyses = useCallback(async () => {
+    try {
+      const response = await axios.get('/api/investment-analyses');
+      setSavedAnalyses(response.data);
+    } catch (error) {
+      console.error('Error fetching analyses:', error);
+    }
+  }, []);
+
   useEffect(() => {
     // Redirect to login if not authenticated after loading
     if (!loading && !user) {
@@ -30,24 +40,23 @@ const Dashboard = () => {
         email: user.email,
         password: ''
       });
-      // Fetch saved analyses
-      const fetchAnalyses = async () => {
+
+      // Load all data at once
+      const loadData = async () => {
         try {
-          const response = await axios.get('/api/investment-analyses');
-          setSavedAnalyses(response.data);
+          await Promise.all([
+            fetchAnalyses(),
+            getSavedProperties(),
+            user.role === 'agent' || user.role === 'admin' ? getMyProperties() : Promise.resolve()
+          ]);
         } catch (error) {
-          console.error('Error fetching analyses:', error);
+          console.error('Error loading dashboard data:', error);
         }
       };
-      fetchAnalyses();
-      
-      getSavedProperties();
-      
-      if (user.role === 'agent' || user.role === 'admin') {
-        getMyProperties();
-      }
+
+      loadData();
     }
-  }, [user, loading, navigate, getSavedProperties, getMyProperties]);
+  }, [user, loading, navigate]); // Remove getSavedProperties and getMyProperties from dependencies
 
   const handleProfileChange = (e) => {
     setProfileData({ ...profileData, [e.target.name]: e.target.value });

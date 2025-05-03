@@ -1,5 +1,5 @@
-import { createContext, useState } from 'react';
-import axios from 'axios';
+import { createContext, useState, useCallback } from "react";
+import axios from "axios";
 
 const PropertyContext = createContext();
 
@@ -13,26 +13,26 @@ export const PropertyProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [filteredProperties, setFilteredProperties] = useState([]);
   const [filter, setFilter] = useState({
-    city: '',
-    state: '',
-    minPrice: '',
-    maxPrice: '',
-    beds: '',
-    baths: '',
-    type: '',
-    status: 'For Sale'
+    city: "",
+    state: "",
+    minPrice: "",
+    maxPrice: "",
+    beds: "",
+    baths: "",
+    type: "",
+    status: "For Sale",
   });
 
   // Get all properties
   const getProperties = async () => {
     setLoading(true);
     try {
-      const res = await axios.get('/api/properties');
+      const res = await axios.get("/api/properties");
       setProperties(res.data);
       setFilteredProperties(res.data);
       setLoading(false);
     } catch (err) {
-      setError(err.response?.data.msg || 'Error fetching properties');
+      setError(err.response?.data.msg || "Error fetching properties");
       setLoading(false);
     }
   };
@@ -45,7 +45,7 @@ export const PropertyProvider = ({ children }) => {
       setProperty(res.data);
       setLoading(false);
     } catch (err) {
-      setError(err.response?.data.msg || 'Error fetching property');
+      setError(err.response?.data.msg || "Error fetching property");
       setLoading(false);
     }
   };
@@ -55,23 +55,23 @@ export const PropertyProvider = ({ children }) => {
     setLoading(true);
     setError(null);
     try {
-      console.log('Sending property data to server:', formData);
-      const res = await axios.post('/api/properties', formData);
-      console.log('Server response:', res.data);
+      console.log("Sending property data to server:", formData);
+      const res = await axios.post("/api/properties", formData);
+      console.log("Server response:", res.data);
       setMyProperties([res.data, ...myProperties]);
       setLoading(false);
       return res.data;
     } catch (err) {
-      console.error('Error in createProperty:', err);
+      console.error("Error in createProperty:", err);
       if (err.response) {
-        console.error('Server response:', err.response.data);
-        setError(err.response.data.msg || 'Error creating property');
+        console.error("Server response:", err.response.data);
+        setError(err.response.data.msg || "Error creating property");
       } else if (err.request) {
-        console.error('No response received:', err.request);
-        setError('No response from server. Please try again later.');
+        console.error("No response received:", err.request);
+        setError("No response from server. Please try again later.");
       } else {
-        console.error('Error setting up request:', err.message);
-        setError('Error setting up request. Please try again.');
+        console.error("Error setting up request:", err.message);
+        setError("Error setting up request. Please try again.");
       }
       setLoading(false);
       return null;
@@ -84,12 +84,12 @@ export const PropertyProvider = ({ children }) => {
     try {
       const res = await axios.put(`/api/properties/${id}`, formData);
       setMyProperties(
-        myProperties.map(prop => prop.id === id ? res.data : prop)
+        myProperties.map((prop) => (prop.id === id ? res.data : prop))
       );
       setLoading(false);
       return res.data;
     } catch (err) {
-      setError(err.response?.data.msg || 'Error updating property');
+      setError(err.response?.data.msg || "Error updating property");
       setLoading(false);
       return null;
     }
@@ -100,28 +100,28 @@ export const PropertyProvider = ({ children }) => {
     setLoading(true);
     try {
       await axios.delete(`/api/properties/${id}`);
-      setMyProperties(myProperties.filter(prop => prop.id !== id));
+      setMyProperties(myProperties.filter((prop) => prop.id !== id));
       setLoading(false);
       return true;
     } catch (err) {
-      setError(err.response?.data.msg || 'Error deleting property');
+      setError(err.response?.data.msg || "Error deleting property");
       setLoading(false);
       return false;
     }
   };
 
   // Get saved properties
-  const getSavedProperties = async () => {
+  const getSavedProperties = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await axios.get('/api/users/saved-properties');
+      const res = await axios.get("/api/users/saved-properties");
       setSavedProperties(res.data);
       setLoading(false);
     } catch (err) {
-      setError(err.response?.data.msg || 'Error fetching saved properties');
+      setError(err.response?.data.msg || "Error fetching saved properties");
       setLoading(false);
     }
-  };
+  }, []);
 
   // Save property
   const saveProperty = async (id) => {
@@ -129,14 +129,14 @@ export const PropertyProvider = ({ children }) => {
       await axios.post(`/api/properties/${id}/save`);
       // Update saved properties list if it's loaded
       if (savedProperties.length > 0) {
-        const propToSave = properties.find(p => p.id === id);
+        const propToSave = properties.find((p) => p.id === id);
         if (propToSave) {
           setSavedProperties([...savedProperties, propToSave]);
         }
       }
       return true;
     } catch (err) {
-      setError(err.response?.data.msg || 'Error saving property');
+      setError(err.response?.data.msg || "Error saving property");
       return false;
     }
   };
@@ -145,36 +145,36 @@ export const PropertyProvider = ({ children }) => {
   const removeSavedProperty = async (id) => {
     try {
       await axios.delete(`/api/properties/${id}/save`);
-      setSavedProperties(savedProperties.filter(prop => prop.id !== id));
+      setSavedProperties(savedProperties.filter((prop) => prop.id !== id));
       return true;
     } catch (err) {
-      setError(err.response?.data.msg || 'Error removing saved property');
+      setError(err.response?.data.msg || "Error removing saved property");
       return false;
     }
   };
 
   // Get my properties
-  const getMyProperties = async () => {
+  const getMyProperties = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await axios.get('/api/users/properties');
+      const res = await axios.get("/api/users/properties");
       setMyProperties(res.data);
       setLoading(false);
     } catch (err) {
-      setError(err.response?.data.msg || 'Error fetching your properties');
+      setError(err.response?.data.msg || "Error fetching your properties");
       setLoading(false);
     }
-  };
+  }, []);
 
   // Get enquiries
   const getEnquiries = async () => {
     setLoading(true);
     try {
-      const res = await axios.get('/api/enquiries');
+      const res = await axios.get("/api/enquiries");
       setEnquiries(res.data);
       setLoading(false);
     } catch (err) {
-      setError(err.response?.data.msg || 'Error fetching enquiries');
+      setError(err.response?.data.msg || "Error fetching enquiries");
       setLoading(false);
     }
   };
@@ -182,10 +182,10 @@ export const PropertyProvider = ({ children }) => {
   // Create enquiry
   const createEnquiry = async (formData) => {
     try {
-      const res = await axios.post('/api/enquiries', formData);
+      const res = await axios.post("/api/enquiries", formData);
       return res.data;
     } catch (err) {
-      setError(err.response?.data.msg || 'Error sending enquiry');
+      setError(err.response?.data.msg || "Error sending enquiry");
       return null;
     }
   };
@@ -194,12 +194,10 @@ export const PropertyProvider = ({ children }) => {
   const updateEnquiryStatus = async (id, status) => {
     try {
       const res = await axios.put(`/api/enquiries/${id}`, { status });
-      setEnquiries(
-        enquiries.map(enq => enq.id === id ? res.data : enq)
-      );
+      setEnquiries(enquiries.map((enq) => (enq.id === id ? res.data : enq)));
       return true;
     } catch (err) {
-      setError(err.response?.data.msg || 'Error updating enquiry');
+      setError(err.response?.data.msg || "Error updating enquiry");
       return false;
     }
   };
@@ -207,43 +205,45 @@ export const PropertyProvider = ({ children }) => {
   // Filter properties
   const filterProperties = () => {
     let filtered = properties;
-    
+
     if (filter.city) {
-      filtered = filtered.filter(p => 
+      filtered = filtered.filter((p) =>
         p.city.toLowerCase().includes(filter.city.toLowerCase())
       );
     }
-    
+
     if (filter.state) {
-      filtered = filtered.filter(p => 
+      filtered = filtered.filter((p) =>
         p.state.toLowerCase().includes(filter.state.toLowerCase())
       );
     }
-    
+
     if (filter.minPrice) {
-      filtered = filtered.filter(p => p.price >= parseInt(filter.minPrice));
+      filtered = filtered.filter((p) => p.price >= parseInt(filter.minPrice));
     }
-    
+
     if (filter.maxPrice) {
-      filtered = filtered.filter(p => p.price <= parseInt(filter.maxPrice));
+      filtered = filtered.filter((p) => p.price <= parseInt(filter.maxPrice));
     }
-    
+
     if (filter.beds) {
-      filtered = filtered.filter(p => p.bedrooms >= parseInt(filter.beds));
+      filtered = filtered.filter((p) => p.bedrooms >= parseInt(filter.beds));
     }
-    
+
     if (filter.baths) {
-      filtered = filtered.filter(p => p.bathrooms >= parseFloat(filter.baths));
+      filtered = filtered.filter(
+        (p) => p.bathrooms >= parseFloat(filter.baths)
+      );
     }
-    
+
     if (filter.type) {
-      filtered = filtered.filter(p => p.property_type === filter.type);
+      filtered = filtered.filter((p) => p.property_type === filter.type);
     }
-    
+
     if (filter.status) {
-      filtered = filtered.filter(p => p.status === filter.status);
+      filtered = filtered.filter((p) => p.status === filter.status);
     }
-    
+
     setFilteredProperties(filtered);
   };
 
@@ -281,7 +281,7 @@ export const PropertyProvider = ({ children }) => {
         updateEnquiryStatus,
         filterProperties,
         updateFilter,
-        clearError
+        clearError,
       }}
     >
       {children}
