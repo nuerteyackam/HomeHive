@@ -11,7 +11,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Redirect if already authenticated
+    // Redirect if already authenticated//authentication
     if (isAuthenticated) {
       navigate('/dashboard');
     }

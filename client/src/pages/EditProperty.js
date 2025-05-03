@@ -27,7 +27,7 @@ const EditProperty = () => {
 
   useEffect(() => {
     getPropertyById(id);
-    // eslint-disable-next-line
+    // eslint-disable-next-line 
   }, [id]);
 
   useEffect(() => {
