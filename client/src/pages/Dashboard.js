@@ -2,13 +2,14 @@ import React, { useContext, useEffect, useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
 import PropertyContext from '../context/PropertyContext';
-import axios from 'axios';
+import axiosInstance from '../utils/axios'; // Change to use axiosInstance
 //import "./Dashboard.css";
 
 const Dashboard = () => {
   const { user, updateProfile, logout, loading: authLoading } = useContext(AuthContext);
   const { savedProperties, myProperties, getSavedProperties, getMyProperties, loading: propertyLoading } = useContext(PropertyContext);
   const [savedAnalyses, setSavedAnalyses] = useState([]);
+  const [analysesLoading, setAnalysesLoading] = useState(false);
   const [profileData, setProfileData] = useState({
     name: '',
     email: '',
@@ -19,12 +20,16 @@ const Dashboard = () => {
 
   // Memoize fetchAnalyses to prevent recreation on every render
   const fetchAnalyses = useCallback(async () => {
+    setAnalysesLoading(true);
     try {
-      const response = await axios.get('/api/investment-analyses');
-      setSavedAnalyses(Array.isArray(response.data) ? response.data : []);
+      const response = await axiosInstance.get('/api/investment-analyses');
+      // Ensure we always set an array, even if the response is null/undefined
+      setSavedAnalyses(Array.isArray(response?.data) ? response.data : []);
     } catch (error) {
       console.error('Error fetching analyses:', error);
-      setSavedAnalyses([]);
+      setSavedAnalyses([]); // Set empty array on error
+    } finally {
+      setAnalysesLoading(false);
     }
   }, []);
 
@@ -81,7 +86,7 @@ const Dashboard = () => {
     }
   };
 
-  if (authLoading || propertyLoading) {
+  if (authLoading || propertyLoading || analysesLoading) {
     return <div className="loading">Loading...</div>;
   }
 
@@ -95,6 +100,7 @@ const Dashboard = () => {
   // Ensure we have arrays before using map
   const safeProperties = Array.isArray(savedProperties) ? savedProperties : [];
   const safeMyProperties = Array.isArray(myProperties) ? myProperties : [];
+  const safeAnalyses = Array.isArray(savedAnalyses) ? savedAnalyses : [];
 
   return (
     <div className="dashboard-layout">
@@ -208,7 +214,7 @@ const Dashboard = () => {
             {(user.role === 'user' || user.role === 'buyer' || user.role === 'agent' || user.role === 'admin') && (
               <div className="stat-card">
                 <h3>Investment Analyses</h3>
-                <p className="stat-value">{savedAnalyses.length}</p>
+                <p className="stat-value">{safeAnalyses.length}</p>
                 <Link to="/analytics" className="btn btn-outline">View All</Link>
               </div>
             )}
@@ -253,17 +259,17 @@ const Dashboard = () => {
           {(user.role === 'user' || user.role === 'buyer' || user.role === 'agent' || user.role === 'admin') && (
             <section className="recent-section">
               <h2>Recent Investment Analyses</h2>
-              {savedAnalyses.length === 0 ? (
+              {safeAnalyses.length === 0 ? (
                 <p>You haven't created any investment analyses yet.</p>
               ) : (
                 <div className="saved-properties-list">
-                  {savedAnalyses.slice(0, 3).map(analysis => (
+                  {safeAnalyses.slice(0, 3).map(analysis => (
                     <div key={analysis.id} className="saved-property-card">
                       <div className="saved-property-info">
-                        <h3>Analysis for ${parseFloat(analysis.purchase_price).toLocaleString()}</h3>
-                        <p className="saved-property-price">ROI: {parseFloat(analysis.roi).toFixed(2)}%</p>
-                        <p>Monthly Cash Flow: ${parseFloat(analysis.cash_flow).toFixed(2)}</p>
-                        <p>Rental Yield: {parseFloat(analysis.rental_yield).toFixed(2)}%</p>
+                        <h3>Analysis for ${parseFloat(analysis.purchase_price || 0).toLocaleString()}</h3>
+                        <p className="saved-property-price">ROI: {parseFloat(analysis.roi || 0).toFixed(2)}%</p>
+                        <p>Monthly Cash Flow: ${parseFloat(analysis.cash_flow || 0).toFixed(2)}</p>
+                        <p>Rental Yield: {parseFloat(analysis.rental_yield || 0).toFixed(2)}%</p>
                         <p>Created: {new Date(analysis.created_at).toLocaleDateString()}</p>
                         <Link to="/analytics" className="btn btn-sm">
                           View Details
@@ -271,7 +277,7 @@ const Dashboard = () => {
                       </div>
                     </div>
                   ))}
-                  {savedAnalyses.length > 3 && (
+                  {safeAnalyses.length > 3 && (
                     <Link to="/analytics" className="btn btn-outline">
                       View All Analyses
                     </Link>
