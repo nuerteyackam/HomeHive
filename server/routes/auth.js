@@ -60,6 +60,7 @@ router.post('/register', async (req, res) => {
 // @desc    Authenticate user & get token
 // @access  Public
 router.post('/login', async (req, res) => {
+  console.log('Login attempt with:', { email: req.body.email });
   const { email, password } = req.body;
 
   try {
@@ -70,15 +71,18 @@ router.post('/login', async (req, res) => {
     );
 
     if (userResult.rows.length === 0) {
+      console.log('User not found:', email);
       return res.status(400).json({ msg: 'Invalid credentials' });
     }
 
     const user = userResult.rows[0];
+    console.log('User found:', { id: user.id, role: user.role });
 
     // Compare password
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
+      console.log('Password mismatch for user:', email);
       return res.status(400).json({ msg: 'Invalid credentials' });
     }
 
@@ -95,12 +99,16 @@ router.post('/login', async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: '1d' },
       (err, token) => {
-        if (err) throw err;
+        if (err) {
+          console.error('Token generation error:', err);
+          throw err;
+        }
+        console.log('Token generated successfully for user:', email);
         res.json({ token });
       }
     );
   } catch (err) {
-    console.error(err.message);
+    console.error('Login error:', err.message);
     res.status(500).send('Server error');
   }
 });
