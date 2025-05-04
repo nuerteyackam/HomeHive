@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect, useContext } from 'react';
-import axios from 'axios';
+import axiosInstance from '../utils/axios';
 import setAuthToken from '../utils/setAuthToken';
 
 const AuthContext = createContext();
@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
       if (localStorage.token) {
         setAuthToken(localStorage.token);
         try {
-          const res = await axios.get('/api/auth/me');
+          const res = await axiosInstance.get('/api/auth/me');
           setUser(res.data);
           setIsAuthenticated(true);
         } catch (err) {
@@ -44,12 +44,12 @@ export const AuthProvider = ({ children }) => {
   // Register user
   const register = async (formData) => {
     try {
-      const res = await axios.post('/api/auth/register', formData);
+      const res = await axiosInstance.post('/api/auth/register', formData);
       localStorage.setItem('token', res.data.token);
       setAuthToken(res.data.token);
       
       // Load user after registration
-      const userRes = await axios.get('/api/auth/me');
+      const userRes = await axiosInstance.get('/api/auth/me');
       setUser(userRes.data);
       setIsAuthenticated(true);
       setError(null);
@@ -63,17 +63,18 @@ export const AuthProvider = ({ children }) => {
   // Login user
   const login = async (formData) => {
     try {
-      const res = await axios.post('/api/auth/login', formData);
+      const res = await axiosInstance.post('/api/auth/login', formData);
       localStorage.setItem('token', res.data.token);
       setAuthToken(res.data.token);
       
       // Load user after login
-      const userRes = await axios.get('/api/auth/me');
+      const userRes = await axiosInstance.get('/api/auth/me');
       setUser(userRes.data);
       setIsAuthenticated(true);
       setError(null);
       return true;
     } catch (err) {
+      console.error('Login error:', err);
       setError(err.response?.data.msg || 'Login failed');
       return false;
     }
@@ -90,7 +91,7 @@ export const AuthProvider = ({ children }) => {
   // Update profile
   const updateProfile = async (formData) => {
     try {
-      const res = await axios.put('/api/users/profile', formData);
+      const res = await axiosInstance.put('/api/users/profile', formData);
       setUser(res.data);
       setError(null);
       return true;
