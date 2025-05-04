@@ -34,13 +34,13 @@ app.use('/api/users', userRoutes);
 app.use('/api/enquiries', enquiryRoutes);
 app.use('/api/investment-analyses', investmentAnalysisRoutes);
 
-if (process.env.NODE_ENV === 'production'){
-    app.use(express.static(path.join(__dirname, '../client/build')));
-
-    app.get('*', (req, res) => {
-        res.sendFile(path.join(__dirname, '../client/build/index.html'));
-    });
-}
+// Remove static file serving and catch-all route since we're running API-only on Railway
+// if (process.env.NODE_ENV === 'production'){
+//     app.use(express.static(path.join(__dirname, '../client/build')));
+//     app.get('*', (req, res) => {
+//         res.sendFile(path.join(__dirname, '../client/build/index.html'));
+//     });
+// }
 
 const PORT = process.env.PORT || 5000;
 
