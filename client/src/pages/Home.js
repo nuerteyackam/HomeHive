@@ -1,7 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import PropertyContext from '../context/PropertyContext';
-import PropertyCard from '../components/properties/PropertyCard';
 
 const Home = () => {
   const { properties, getProperties, loading } = useContext(PropertyContext);
