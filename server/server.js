@@ -19,10 +19,15 @@ pool.connect()
         console.error('Error connecting to the database', err);
         process.exit(1); // Exit the process if the database connection fails
     });
-    
-// Enable CORS for all routes
-app.use(cors());
 
+// CORS configuration
+app.use(cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+// Parse JSON bodies
 app.use(express.json());
 
 // Routes
