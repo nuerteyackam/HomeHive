@@ -20,32 +20,8 @@ pool.connect()
         process.exit(1); // Exit the process if the database connection fails
     });
     
-// CORS configuration
-const corsOptions = {
-    origin: function(origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin) return callback(null, true);
-        
-        const allowedOrigins = [
-            'http://localhost:3000',
-            'https://homehive-r13q6kgcj-joels-projects-13e73204.vercel.app'
-        ];
-        
-        if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-    credentials: false
-};
-
-app.use(cors(corsOptions));
-
-// Handle OPTIONS preflight requests
-app.options('*', cors(corsOptions));
+// Enable CORS for all routes
+app.use(cors());
 
 app.use(express.json());
 
