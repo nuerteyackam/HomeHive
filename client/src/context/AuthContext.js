@@ -63,19 +63,30 @@ export const AuthProvider = ({ children }) => {
   // Login user
   const login = async (formData) => {
     try {
+      console.log('Attempting login with:', formData);
       const res = await axiosInstance.post('/api/auth/login', formData);
-      localStorage.setItem('token', res.data.token);
-      setAuthToken(res.data.token);
+      console.log('Login response:', res.data);
       
-      // Load user after login
-      const userRes = await axiosInstance.get('/api/auth/me');
-      setUser(userRes.data);
-      setIsAuthenticated(true);
-      setError(null);
-      return true;
+      if (res.data.token) {
+        localStorage.setItem('token', res.data.token);
+        setAuthToken(res.data.token);
+        console.log('Token stored in localStorage');
+        
+        // Load user after login
+        const userRes = await axiosInstance.get('/api/auth/me');
+        console.log('User data:', userRes.data);
+        setUser(userRes.data);
+        setIsAuthenticated(true);
+        setError(null);
+        return true;
+      } else {
+        console.error('No token received in login response');
+        setError('Login failed - no token received');
+        return false;
+      }
     } catch (err) {
-      console.error('Login error:', err);
-      setError(err.response?.data.msg || 'Login failed');
+      console.error('Login error:', err.response?.data || err.message);
+      setError(err.response?.data?.msg || 'Login failed');
       return false;
     }
   };
