@@ -20,11 +20,17 @@ pool.connect()
         process.exit(1); // Exit the process if the database connection fails
     });
     
-//Middleware
+// CORS configuration
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-  credentials: true
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    credentials: false
 }));
+
+// Handle OPTIONS preflight requests
+app.options('*', cors());
+
 app.use(express.json());
 
 // Routes
