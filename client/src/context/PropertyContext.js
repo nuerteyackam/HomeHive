@@ -118,10 +118,12 @@ export const PropertyProvider = ({ children }) => {
     setLoading(true);
     try {
       const res = await axiosInstance.get("/api/users/saved-properties");
-      setSavedProperties(res.data);
+      setSavedProperties(Array.isArray(res.data) ? res.data : []);
       setLoading(false);
     } catch (err) {
+      console.error("Error fetching saved properties:", err);
       setError(err.response?.data.msg || "Error fetching saved properties");
+      setSavedProperties([]); // Ensure we set an empty array on error
       setLoading(false);
     }
   }, []);
@@ -161,10 +163,12 @@ export const PropertyProvider = ({ children }) => {
     setLoading(true);
     try {
       const res = await axiosInstance.get("/api/users/properties");
-      setMyProperties(res.data);
+      setMyProperties(Array.isArray(res.data) ? res.data : []);
       setLoading(false);
     } catch (err) {
+      console.error("Error fetching your properties:", err);
       setError(err.response?.data.msg || "Error fetching your properties");
+      setMyProperties([]); // Ensure we set an empty array on error
       setLoading(false);
     }
   }, []);

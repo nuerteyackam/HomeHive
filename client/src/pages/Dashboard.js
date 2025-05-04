@@ -6,8 +6,8 @@ import axios from 'axios';
 //import "./Dashboard.css";
 
 const Dashboard = () => {
-  const { user, updateProfile, logout, loading } = useContext(AuthContext);
-  const { savedProperties, myProperties, getSavedProperties, getMyProperties } = useContext(PropertyContext);
+  const { user, updateProfile, logout, loading: authLoading } = useContext(AuthContext);
+  const { savedProperties, myProperties, getSavedProperties, getMyProperties, loading: propertyLoading } = useContext(PropertyContext);
   const [savedAnalyses, setSavedAnalyses] = useState([]);
   const [profileData, setProfileData] = useState({
     name: '',
@@ -21,15 +21,16 @@ const Dashboard = () => {
   const fetchAnalyses = useCallback(async () => {
     try {
       const response = await axios.get('/api/investment-analyses');
-      setSavedAnalyses(response.data);
+      setSavedAnalyses(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error('Error fetching analyses:', error);
+      setSavedAnalyses([]);
     }
   }, []);
 
   useEffect(() => {
     // Redirect to login if not authenticated after loading
-    if (!loading && !user) {
+    if (!authLoading && !user) {
       navigate('/login');
       return;
     }
@@ -56,7 +57,7 @@ const Dashboard = () => {
 
       loadData();
     }
-  }, [user, loading, navigate, fetchAnalyses, getSavedProperties, getMyProperties]);
+  }, [user, authLoading, navigate, fetchAnalyses, getSavedProperties, getMyProperties]);
 
   const handleProfileChange = (e) => {
     setProfileData({ ...profileData, [e.target.name]: e.target.value });
@@ -80,12 +81,20 @@ const Dashboard = () => {
     }
   };
 
-  if (loading || !user) {
+  if (authLoading || propertyLoading) {
     return <div className="loading">Loading...</div>;
+  }
+
+  if (!user) {
+    return null;
   }
 
   const isAgent = user.role === 'agent';
   const isAdmin = user.role === 'admin';
+
+  // Ensure we have arrays before using map
+  const safeProperties = Array.isArray(savedProperties) ? savedProperties : [];
+  const safeMyProperties = Array.isArray(myProperties) ? myProperties : [];
 
   return (
     <div className="dashboard-layout">
@@ -186,13 +195,13 @@ const Dashboard = () => {
           <section className="stats-section">
             <div className="stat-card">
               <h3>Saved Properties</h3>
-              <p className="stat-value">{savedProperties.length}</p>
+              <p className="stat-value">{safeProperties.length}</p>
               <Link to="/saved-properties" className="btn btn-outline">View All</Link>
             </div>
             {(isAgent || isAdmin) && (
               <div className="stat-card">
                 <h3>Your Listings</h3>
-                <p className="stat-value">{myProperties.length}</p>
+                <p className="stat-value">{safeMyProperties.length}</p>
                 <Link to="/my-properties" className="btn btn-outline">View All</Link>
               </div>
             )}
@@ -208,11 +217,11 @@ const Dashboard = () => {
           {/* Recently Saved Properties */}
           <section className="recent-section">
             <h2>Recently Saved Properties</h2>
-            {savedProperties.length === 0 ? (
+            {safeProperties.length === 0 ? (
               <p>You haven't saved any properties yet.</p>
             ) : (
               <div className="saved-properties-list">
-                {savedProperties.slice(0, 3).map(property => (
+                {safeProperties.slice(0, 3).map(property => (
                   <div key={property.id} className="saved-property-card">
                     <div className="saved-property-image">
                       {property.primary_image ? (
@@ -231,7 +240,7 @@ const Dashboard = () => {
                     </div>
                   </div>
                 ))}
-                {savedProperties.length > 3 && (
+                {safeProperties.length > 3 && (
                   <Link to="/saved-properties" className="btn btn-outline">
                     View All Saved Properties
                   </Link>
