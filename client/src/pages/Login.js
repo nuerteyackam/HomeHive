@@ -15,7 +15,7 @@ const Login = () => {
     if (isAuthenticated) {
       navigate('/dashboard');
     }
-    // eslint-disable-next-line
+    
   }, [isAuthenticated]);
 
   const handleChange = (e) => {
