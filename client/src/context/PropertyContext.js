@@ -1,5 +1,5 @@
 import { createContext, useState, useCallback } from "react";
-import axios from "axios";
+import axiosInstance from "../utils/axios";
 
 const PropertyContext = createContext();
 
@@ -27,12 +27,15 @@ export const PropertyProvider = ({ children }) => {
   const getProperties = async () => {
     setLoading(true);
     try {
-      const res = await axios.get("/api/properties");
-      setProperties(res.data);
-      setFilteredProperties(res.data);
+      const res = await axiosInstance.get("/api/properties");
+      setProperties(res.data || []); // Ensure we always set an array
+      setFilteredProperties(res.data || []);
       setLoading(false);
     } catch (err) {
-      setError(err.response?.data.msg || "Error fetching properties");
+      console.error("Error fetching properties:", err);
+      setProperties([]); // Set empty array on error
+      setFilteredProperties([]);
+      setError(err.response?.data?.msg || "Error fetching properties");
       setLoading(false);
     }
   };
@@ -41,7 +44,7 @@ export const PropertyProvider = ({ children }) => {
   const getPropertyById = async (id) => {
     setLoading(true);
     try {
-      const res = await axios.get(`/api/properties/${id}`);
+      const res = await axiosInstance.get(`/api/properties/${id}`);
       setProperty(res.data);
       setLoading(false);
     } catch (err) {
@@ -56,7 +59,7 @@ export const PropertyProvider = ({ children }) => {
     setError(null);
     try {
       console.log("Sending property data to server:", formData);
-      const res = await axios.post("/api/properties", formData);
+      const res = await axiosInstance.post("/api/properties", formData);
       console.log("Server response:", res.data);
       setMyProperties([res.data, ...myProperties]);
       setLoading(false);
@@ -82,7 +85,7 @@ export const PropertyProvider = ({ children }) => {
   const updateProperty = async (id, formData) => {
     setLoading(true);
     try {
-      const res = await axios.put(`/api/properties/${id}`, formData);
+      const res = await axiosInstance.put(`/api/properties/${id}`, formData);
       setMyProperties(
         myProperties.map((prop) => (prop.id === id ? res.data : prop))
       );
@@ -99,7 +102,7 @@ export const PropertyProvider = ({ children }) => {
   const deleteProperty = async (id) => {
     setLoading(true);
     try {
-      await axios.delete(`/api/properties/${id}`);
+      await axiosInstance.delete(`/api/properties/${id}`);
       setMyProperties(myProperties.filter((prop) => prop.id !== id));
       setLoading(false);
       return true;
@@ -114,7 +117,7 @@ export const PropertyProvider = ({ children }) => {
   const getSavedProperties = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await axios.get("/api/users/saved-properties");
+      const res = await axiosInstance.get("/api/users/saved-properties");
       setSavedProperties(res.data);
       setLoading(false);
     } catch (err) {
@@ -126,7 +129,7 @@ export const PropertyProvider = ({ children }) => {
   // Save property
   const saveProperty = async (id) => {
     try {
-      await axios.post(`/api/properties/${id}/save`);
+      await axiosInstance.post(`/api/properties/${id}/save`);
       // Update saved properties list if it's loaded
       if (savedProperties.length > 0) {
         const propToSave = properties.find((p) => p.id === id);
@@ -144,7 +147,7 @@ export const PropertyProvider = ({ children }) => {
   // Remove saved property
   const removeSavedProperty = async (id) => {
     try {
-      await axios.delete(`/api/properties/${id}/save`);
+      await axiosInstance.delete(`/api/properties/${id}/save`);
       setSavedProperties(savedProperties.filter((prop) => prop.id !== id));
       return true;
     } catch (err) {
@@ -157,7 +160,7 @@ export const PropertyProvider = ({ children }) => {
   const getMyProperties = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await axios.get("/api/users/properties");
+      const res = await axiosInstance.get("/api/users/properties");
       setMyProperties(res.data);
       setLoading(false);
     } catch (err) {
@@ -170,7 +173,7 @@ export const PropertyProvider = ({ children }) => {
   const getEnquiries = async () => {
     setLoading(true);
     try {
-      const res = await axios.get("/api/enquiries");
+      const res = await axiosInstance.get("/api/enquiries");
       setEnquiries(res.data);
       setLoading(false);
     } catch (err) {
@@ -182,7 +185,7 @@ export const PropertyProvider = ({ children }) => {
   // Create enquiry
   const createEnquiry = async (formData) => {
     try {
-      const res = await axios.post("/api/enquiries", formData);
+      const res = await axiosInstance.post("/api/enquiries", formData);
       return res.data;
     } catch (err) {
       setError(err.response?.data.msg || "Error sending enquiry");
@@ -193,7 +196,7 @@ export const PropertyProvider = ({ children }) => {
   // Update enquiry status
   const updateEnquiryStatus = async (id, status) => {
     try {
-      const res = await axios.put(`/api/enquiries/${id}`, { status });
+      const res = await axiosInstance.put(`/api/enquiries/${id}`, { status });
       setEnquiries(enquiries.map((enq) => (enq.id === id ? res.data : enq)));
       return true;
     } catch (err) {

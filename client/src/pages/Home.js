@@ -3,15 +3,15 @@ import { Link } from 'react-router-dom';
 import PropertyContext from '../context/PropertyContext';
 
 const Home = () => {
-  const { properties, getProperties, loading } = useContext(PropertyContext);
+  const { properties, getProperties, loading, error } = useContext(PropertyContext);
 
   useEffect(() => {
     getProperties();
     // eslint-disable-next-line
   }, []);
 
-  // Get only the 6 most recent properties
-  const recentProperties = properties.slice(0, 6);
+  // Get only the 6 most recent properties, safely handle undefined properties
+  const recentProperties = Array.isArray(properties) ? properties.slice(0, 6) : [];
 
   return (
     <div className="home-page">
@@ -48,6 +48,10 @@ const Home = () => {
         </div>
         {loading ? (
           <div className="loading">Loading...</div>
+        ) : error ? (
+          <div className="error-message">{error}</div>
+        ) : recentProperties.length === 0 ? (
+          <div className="no-properties">No properties available at the moment.</div>
         ) : (
           <div className="featured-grid">
             {recentProperties.map((property) => (
@@ -57,13 +61,13 @@ const Home = () => {
                   <span className="featured-badge">{property.status}</span>
                 </div>
                 <div className="featured-content">
-                  <div className="featured-price">${property.price.toLocaleString()}</div>
+                  <div className="featured-price">${property.price?.toLocaleString() || 'Price not available'}</div>
                   <div className="featured-title">{property.title}</div>
                   <div className="featured-location">{property.city}, {property.state}</div>
                   <div className="featured-features">
                     <span>{property.bedrooms} Beds</span>
                     <span>{property.bathrooms} Baths</span>
-                    <span>{property.square_feet.toLocaleString()} sqft</span>
+                    <span>{property.square_feet?.toLocaleString() || 'N/A'} sqft</span>
                   </div>
                   <Link to={`/properties/${property.id}`} className="btn btn-primary" style={{marginTop:'1rem'}}>View Details</Link>
                 </div>
