@@ -56,7 +56,7 @@ const Dashboard = () => {
 
       loadData();
     }
-  }, [user, loading, navigate]); // Remove getSavedProperties and getMyProperties from dependencies
+  }, [user, loading, navigate, fetchAnalyses, getSavedProperties, getMyProperties]);
 
   const handleProfileChange = (e) => {
     setProfileData({ ...profileData, [e.target.name]: e.target.value });
