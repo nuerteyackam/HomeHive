@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import axios from "../../utils/axios";
 
 const PropertyManagement = () => {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editingProperty, setEditingProperty] = useState(null);
-  const [viewMode, setViewMode] = useState('list'); // list, edit
-  const [successMessage, setSuccessMessage] = useState('');
+  const [viewMode, setViewMode] = useState("list"); // list, edit
+  const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
     fetchProperties();
@@ -17,7 +17,7 @@ const PropertyManagement = () => {
   useEffect(() => {
     if (successMessage) {
       const timer = setTimeout(() => {
-        setSuccessMessage('');
+        setSuccessMessage("");
       }, 3000);
       return () => clearTimeout(timer);
     }
@@ -25,17 +25,17 @@ const PropertyManagement = () => {
 
   const fetchProperties = async () => {
     try {
-      const res = await axios.get('/api/properties/admin/all', {
+      const res = await axios.get("/api/properties/admin/all", {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
       setProperties(Array.isArray(res.data) ? res.data : []);
       setLoading(false);
       setError(null);
     } catch (err) {
-      console.error('Error fetching properties:', err);
-      setError(err.response?.data?.message || 'Error fetching properties');
+      console.error("Error fetching properties:", err);
+      setError(err.response?.data?.message || "Error fetching properties");
       setProperties([]);
       setLoading(false);
     }
@@ -45,16 +45,16 @@ const PropertyManagement = () => {
     try {
       await axios.put(`/api/properties/admin/${propertyId}`, updates, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
-      setSuccessMessage('Property updated successfully');
+      setSuccessMessage("Property updated successfully");
       fetchProperties();
       setEditingProperty(null);
-      setViewMode('list');
+      setViewMode("list");
       setError(null);
     } catch (err) {
-      setError(err.response?.data?.message || 'Error updating property');
+      setError(err.response?.data?.message || "Error updating property");
     }
   };
 
@@ -62,42 +62,42 @@ const PropertyManagement = () => {
     try {
       await axios.put(`/api/properties/admin/${propertyId}/status`, updates, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
-      setSuccessMessage('Property status updated');
+      setSuccessMessage("Property status updated");
       fetchProperties();
       setError(null);
     } catch (err) {
-      setError(err.response?.data?.message || 'Error updating property status');
+      setError(err.response?.data?.message || "Error updating property status");
     }
   };
 
   const handleDeleteProperty = async (propertyId) => {
-    if (window.confirm('Are you sure you want to delete this property?')) {
+    if (window.confirm("Are you sure you want to delete this property?")) {
       try {
         await axios.delete(`/api/properties/admin/${propertyId}`, {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         });
-        setSuccessMessage('Property deleted successfully');
+        setSuccessMessage("Property deleted successfully");
         fetchProperties();
         setError(null);
       } catch (err) {
-        setError(err.response?.data?.message || 'Error deleting property');
+        setError(err.response?.data?.message || "Error deleting property");
       }
     }
   };
 
   const handleEdit = (property) => {
     setEditingProperty(property);
-    setViewMode('edit');
+    setViewMode("edit");
   };
 
   const handleCancelEdit = () => {
     setEditingProperty(null);
-    setViewMode('list');
+    setViewMode("list");
   };
 
   const PropertyList = () => (
@@ -125,7 +125,9 @@ const PropertyManagement = () => {
                     className="form-control form-control-sm status-select"
                     value={property.status}
                     onChange={(e) =>
-                      handleStatusUpdate(property.id, { status: e.target.value })
+                      handleStatusUpdate(property.id, {
+                        status: e.target.value,
+                      })
                     }
                   >
                     <option value="available">Available</option>
@@ -134,7 +136,9 @@ const PropertyManagement = () => {
                     <option value="rented">Rented</option>
                   </select>
                 </td>
-                <td className="price-column">${property.price.toLocaleString()}</td>
+                <td className="price-column">
+                  ${property.price.toLocaleString()}
+                </td>
                 <td>
                   <div className="form-check">
                     <input
@@ -142,7 +146,9 @@ const PropertyManagement = () => {
                       className="form-check-input featured-checkbox"
                       checked={property.featured}
                       onChange={() =>
-                        handleStatusUpdate(property.id, { featured: !property.featured })
+                        handleStatusUpdate(property.id, {
+                          featured: !property.featured,
+                        })
                       }
                     />
                   </div>
@@ -157,9 +163,15 @@ const PropertyManagement = () => {
                       })
                     }
                   >
-                    <option value="pending" className="verification-pending">Pending</option>
-                    <option value="verified" className="verification-verified">Verified</option>
-                    <option value="rejected" className="verification-rejected">Rejected</option>
+                    <option value="pending" className="verification-pending">
+                      Pending
+                    </option>
+                    <option value="verified" className="verification-verified">
+                      Verified
+                    </option>
+                    <option value="rejected" className="verification-rejected">
+                      Rejected
+                    </option>
                   </select>
                 </td>
                 <td>
@@ -184,7 +196,7 @@ const PropertyManagement = () => {
         </table>
       ) : (
         <div className="alert alert-info">
-          {loading ? 'Loading properties...' : 'No properties found.'}
+          {loading ? "Loading properties..." : "No properties found."}
         </div>
       )}
     </div>
@@ -203,11 +215,13 @@ const PropertyManagement = () => {
 
       {/* Messages */}
       {error && <div className="alert alert-danger">{error}</div>}
-      {successMessage && <div className="alert alert-success">{successMessage}</div>}
+      {successMessage && (
+        <div className="alert alert-success">{successMessage}</div>
+      )}
 
       {/* Content */}
-      {viewMode === 'list' && !editingProperty && <PropertyList />}
-      {viewMode === 'edit' && editingProperty && (
+      {viewMode === "list" && !editingProperty && <PropertyList />}
+      {viewMode === "edit" && editingProperty && (
         <div className="edit-form">
           <div className="d-flex justify-content-between align-items-center mb-4">
             <h3>Edit Property</h3>
@@ -215,20 +229,24 @@ const PropertyManagement = () => {
               Cancel
             </button>
           </div>
-          <form onSubmit={(e) => {
-            e.preventDefault();
-            handleUpdateProperty(editingProperty.id, editingProperty);
-          }}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleUpdateProperty(editingProperty.id, editingProperty);
+            }}
+          >
             <div className="form-group mb-3">
               <label>Title</label>
               <input
                 type="text"
                 className="form-control"
                 value={editingProperty.title}
-                onChange={(e) => setEditingProperty({
-                  ...editingProperty,
-                  title: e.target.value
-                })}
+                onChange={(e) =>
+                  setEditingProperty({
+                    ...editingProperty,
+                    title: e.target.value,
+                  })
+                }
                 required
               />
             </div>
@@ -237,10 +255,12 @@ const PropertyManagement = () => {
               <textarea
                 className="form-control"
                 value={editingProperty.description}
-                onChange={(e) => setEditingProperty({
-                  ...editingProperty,
-                  description: e.target.value
-                })}
+                onChange={(e) =>
+                  setEditingProperty({
+                    ...editingProperty,
+                    description: e.target.value,
+                  })
+                }
                 required
               />
             </div>
@@ -251,10 +271,12 @@ const PropertyManagement = () => {
                   type="number"
                   className="form-control"
                   value={editingProperty.price}
-                  onChange={(e) => setEditingProperty({
-                    ...editingProperty,
-                    price: parseFloat(e.target.value)
-                  })}
+                  onChange={(e) =>
+                    setEditingProperty({
+                      ...editingProperty,
+                      price: parseFloat(e.target.value),
+                    })
+                  }
                   required
                 />
               </div>
@@ -264,10 +286,12 @@ const PropertyManagement = () => {
                   type="number"
                   className="form-control"
                   value={editingProperty.bedrooms}
-                  onChange={(e) => setEditingProperty({
-                    ...editingProperty,
-                    bedrooms: parseInt(e.target.value)
-                  })}
+                  onChange={(e) =>
+                    setEditingProperty({
+                      ...editingProperty,
+                      bedrooms: parseInt(e.target.value),
+                    })
+                  }
                   required
                 />
               </div>
@@ -277,10 +301,12 @@ const PropertyManagement = () => {
                   type="number"
                   className="form-control"
                   value={editingProperty.bathrooms}
-                  onChange={(e) => setEditingProperty({
-                    ...editingProperty,
-                    bathrooms: parseFloat(e.target.value)
-                  })}
+                  onChange={(e) =>
+                    setEditingProperty({
+                      ...editingProperty,
+                      bathrooms: parseFloat(e.target.value),
+                    })
+                  }
                   required
                 />
               </div>
@@ -292,10 +318,12 @@ const PropertyManagement = () => {
                   type="number"
                   className="form-control"
                   value={editingProperty.square_feet}
-                  onChange={(e) => setEditingProperty({
-                    ...editingProperty,
-                    square_feet: parseInt(e.target.value)
-                  })}
+                  onChange={(e) =>
+                    setEditingProperty({
+                      ...editingProperty,
+                      square_feet: parseInt(e.target.value),
+                    })
+                  }
                   required
                 />
               </div>
@@ -304,10 +332,12 @@ const PropertyManagement = () => {
                 <select
                   className="form-control"
                   value={editingProperty.property_type}
-                  onChange={(e) => setEditingProperty({
-                    ...editingProperty,
-                    property_type: e.target.value
-                  })}
+                  onChange={(e) =>
+                    setEditingProperty({
+                      ...editingProperty,
+                      property_type: e.target.value,
+                    })
+                  }
                   required
                 >
                   <option value="house">House</option>
@@ -325,10 +355,12 @@ const PropertyManagement = () => {
                   type="text"
                   className="form-control"
                   value={editingProperty.address}
-                  onChange={(e) => setEditingProperty({
-                    ...editingProperty,
-                    address: e.target.value
-                  })}
+                  onChange={(e) =>
+                    setEditingProperty({
+                      ...editingProperty,
+                      address: e.target.value,
+                    })
+                  }
                   required
                 />
               </div>
@@ -340,10 +372,12 @@ const PropertyManagement = () => {
                   type="text"
                   className="form-control"
                   value={editingProperty.city}
-                  onChange={(e) => setEditingProperty({
-                    ...editingProperty,
-                    city: e.target.value
-                  })}
+                  onChange={(e) =>
+                    setEditingProperty({
+                      ...editingProperty,
+                      city: e.target.value,
+                    })
+                  }
                   required
                 />
               </div>
@@ -353,10 +387,12 @@ const PropertyManagement = () => {
                   type="text"
                   className="form-control"
                   value={editingProperty.state}
-                  onChange={(e) => setEditingProperty({
-                    ...editingProperty,
-                    state: e.target.value
-                  })}
+                  onChange={(e) =>
+                    setEditingProperty({
+                      ...editingProperty,
+                      state: e.target.value,
+                    })
+                  }
                   required
                 />
               </div>
@@ -366,10 +402,12 @@ const PropertyManagement = () => {
                   type="text"
                   className="form-control"
                   value={editingProperty.zip_code}
-                  onChange={(e) => setEditingProperty({
-                    ...editingProperty,
-                    zip_code: e.target.value
-                  })}
+                  onChange={(e) =>
+                    setEditingProperty({
+                      ...editingProperty,
+                      zip_code: e.target.value,
+                    })
+                  }
                   required
                 />
               </div>
@@ -380,10 +418,12 @@ const PropertyManagement = () => {
                   type="checkbox"
                   className="form-check-input"
                   checked={editingProperty.featured}
-                  onChange={(e) => setEditingProperty({
-                    ...editingProperty,
-                    featured: e.target.checked
-                  })}
+                  onChange={(e) =>
+                    setEditingProperty({
+                      ...editingProperty,
+                      featured: e.target.checked,
+                    })
+                  }
                 />
                 <label className="form-check-label">Featured Property</label>
               </div>
@@ -392,7 +432,11 @@ const PropertyManagement = () => {
               <button type="submit" className="btn btn-primary">
                 Save Changes
               </button>
-              <button type="button" className="btn btn-secondary" onClick={handleCancelEdit}>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={handleCancelEdit}
+              >
                 Cancel
               </button>
             </div>
@@ -403,4 +447,4 @@ const PropertyManagement = () => {
   );
 };
 
-export default PropertyManagement; 
+export default PropertyManagement;
