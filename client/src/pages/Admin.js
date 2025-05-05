@@ -31,13 +31,19 @@ const Admin = () => {
   }, [user, navigate]);
 
   const fetchUsers = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setError('Authorization token is missing. Please log in again.');
+      setLoading(false);
+      return;
+    }
     try {
       const res = await axios.get('/api/users/admin/all', {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${token}`
         }
       });
-      setUsers(Array.isArray(res.data) ? res.data : []);
+      setUsers(Array.isArray(res.data) ? res.data : res.data.users || []);
       setLoading(false);
     } catch (err) {
       console.error('Error fetching users:', err);
