@@ -25,49 +25,67 @@ const PropertyManagement = () => {
 
   const fetchProperties = async () => {
     try {
-      const res = await axios.get('/api/properties/admin/all');
-      setProperties(res.data);
+      const res = await axios.get('/api/properties/admin/all', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      setProperties(Array.isArray(res.data) ? res.data : []);
       setLoading(false);
       setError(null);
     } catch (err) {
-      setError('Error fetching properties');
+      console.error('Error fetching properties:', err);
+      setError(err.response?.data?.message || 'Error fetching properties');
+      setProperties([]);
       setLoading(false);
     }
   };
 
   const handleUpdateProperty = async (propertyId, updates) => {
     try {
-      await axios.put(`/api/properties/admin/${propertyId}`, updates);
+      await axios.put(`/api/properties/admin/${propertyId}`, updates, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
       setSuccessMessage('Property updated successfully');
       fetchProperties();
       setEditingProperty(null);
       setViewMode('list');
       setError(null);
     } catch (err) {
-      setError('Error updating property');
+      setError(err.response?.data?.message || 'Error updating property');
     }
   };
 
   const handleStatusUpdate = async (propertyId, updates) => {
     try {
-      await axios.put(`/api/properties/admin/${propertyId}/status`, updates);
+      await axios.put(`/api/properties/admin/${propertyId}/status`, updates, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
       setSuccessMessage('Property status updated');
       fetchProperties();
       setError(null);
     } catch (err) {
-      setError('Error updating property status');
+      setError(err.response?.data?.message || 'Error updating property status');
     }
   };
 
   const handleDeleteProperty = async (propertyId) => {
     if (window.confirm('Are you sure you want to delete this property?')) {
       try {
-        await axios.delete(`/api/properties/admin/${propertyId}`);
+        await axios.delete(`/api/properties/admin/${propertyId}`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
         setSuccessMessage('Property deleted successfully');
         fetchProperties();
         setError(null);
       } catch (err) {
-        setError('Error deleting property');
+        setError(err.response?.data?.message || 'Error deleting property');
       }
     }
   };
@@ -84,85 +102,91 @@ const PropertyManagement = () => {
 
   const PropertyList = () => (
     <div className="property-table table-responsive">
-      <table className="table table-striped">
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Agent</th>
-            <th>Status</th>
-            <th className="price-column">Price</th>
-            <th>Featured</th>
-            <th>Verification</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {properties.map((property) => (
-            <tr key={property.id}>
-              <td>{property.title}</td>
-              <td>{property.agent_name}</td>
-              <td>
-                <select
-                  className="form-control form-control-sm status-select"
-                  value={property.status}
-                  onChange={(e) =>
-                    handleStatusUpdate(property.id, { status: e.target.value })
-                  }
-                >
-                  <option value="available">Available</option>
-                  <option value="pending">Pending</option>
-                  <option value="sold">Sold</option>
-                  <option value="rented">Rented</option>
-                </select>
-              </td>
-              <td className="price-column">${property.price.toLocaleString()}</td>
-              <td>
-                <div className="form-check">
-                  <input
-                    type="checkbox"
-                    className="form-check-input featured-checkbox"
-                    checked={property.featured}
-                    onChange={() =>
-                      handleStatusUpdate(property.id, { featured: !property.featured })
-                    }
-                  />
-                </div>
-              </td>
-              <td>
-                <select
-                  className="form-control form-control-sm status-select"
-                  value={property.verification_status}
-                  onChange={(e) =>
-                    handleStatusUpdate(property.id, {
-                      verification_status: e.target.value,
-                    })
-                  }
-                >
-                  <option value="pending" className="verification-pending">Pending</option>
-                  <option value="verified" className="verification-verified">Verified</option>
-                  <option value="rejected" className="verification-rejected">Rejected</option>
-                </select>
-              </td>
-              <td>
-                <div className="property-actions">
-                  <button
-                    className="btn btn-sm btn-primary"
-                    onClick={() => handleEdit(property)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="btn btn-sm btn-danger"
-                    onClick={() => handleDeleteProperty(property.id)}
-                  >
-                    Delete
-                  </button>
-                </div>
-              </td>
+      {properties && properties.length > 0 ? (
+        <table className="table table-striped">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Agent</th>
+              <th>Status</th>
+              <th className="price-column">Price</th>
+              <th>Featured</th>
+              <th>Verification</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {properties.map((property) => (
+              <tr key={property.id}>
+                <td>{property.title}</td>
+                <td>{property.agent_name}</td>
+                <td>
+                  <select
+                    className="form-control form-control-sm status-select"
+                    value={property.status}
+                    onChange={(e) =>
+                      handleStatusUpdate(property.id, { status: e.target.value })
+                    }
+                  >
+                    <option value="available">Available</option>
+                    <option value="pending">Pending</option>
+                    <option value="sold">Sold</option>
+                    <option value="rented">Rented</option>
+                  </select>
+                </td>
+                <td className="price-column">${property.price.toLocaleString()}</td>
+                <td>
+                  <div className="form-check">
+                    <input
+                      type="checkbox"
+                      className="form-check-input featured-checkbox"
+                      checked={property.featured}
+                      onChange={() =>
+                        handleStatusUpdate(property.id, { featured: !property.featured })
+                      }
+                    />
+                  </div>
+                </td>
+                <td>
+                  <select
+                    className="form-control form-control-sm status-select"
+                    value={property.verification_status}
+                    onChange={(e) =>
+                      handleStatusUpdate(property.id, {
+                        verification_status: e.target.value,
+                      })
+                    }
+                  >
+                    <option value="pending" className="verification-pending">Pending</option>
+                    <option value="verified" className="verification-verified">Verified</option>
+                    <option value="rejected" className="verification-rejected">Rejected</option>
+                  </select>
+                </td>
+                <td>
+                  <div className="property-actions">
+                    <button
+                      className="btn btn-sm btn-primary"
+                      onClick={() => handleEdit(property)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="btn btn-sm btn-danger"
+                      onClick={() => handleDeleteProperty(property.id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <div className="alert alert-info">
+          {loading ? 'Loading properties...' : 'No properties found.'}
+        </div>
+      )}
     </div>
   );
 

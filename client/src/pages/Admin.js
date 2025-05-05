@@ -22,7 +22,7 @@ const Admin = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user?.role !== 'admin') {
+    if (!user || user?.role !== 'admin') {
       navigate('/dashboard');
       return;
     }
@@ -32,21 +32,32 @@ const Admin = () => {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get('/api/users/admin/all');
-      setUsers(res.data);
+      const res = await axios.get('/api/users/admin/all', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      setUsers(Array.isArray(res.data) ? res.data : []);
       setLoading(false);
     } catch (err) {
-      setError('Error fetching users');
+      console.error('Error fetching users:', err);
+      setError(err.response?.data?.message || 'Error fetching users');
+      setUsers([]);
       setLoading(false);
     }
   };
 
   const fetchActivityLogs = async () => {
     try {
-      const res = await axios.get('/api/users/admin/activity-logs');
-      setActivityLogs(res.data);
+      const res = await axios.get('/api/users/admin/activity-logs', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      setActivityLogs(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error('Error fetching activity logs:', err);
+      setActivityLogs([]);
     }
   };
 
@@ -204,59 +215,65 @@ const Admin = () => {
           </div>
 
           <div className="table-responsive">
-            <table className="table table-striped">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Role</th>
-                  <th>Status</th>
-                  <th>Created</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.map((user) => (
-                  <tr key={user.id}>
-                    <td>{user.name}</td>
-                    <td>{user.email}</td>
-                    <td>{user.role}</td>
-                    <td>
-                      <span
-                        className={`badge ${
-                          user.is_active ? 'bg-success' : 'bg-danger'
-                        }`}
-                      >
-                        {user.is_active ? 'Active' : 'Suspended'}
-                      </span>
-                    </td>
-                    <td>{new Date(user.created_at).toLocaleDateString()}</td>
-                    <td>
-                      <button
-                        className="btn btn-sm btn-primary me-2"
-                        onClick={() => setEditingUser(user)}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        className="btn btn-sm btn-warning me-2"
-                        onClick={() =>
-                          handleToggleActive(user.id, user.is_active)
-                        }
-                      >
-                        {user.is_active ? 'Suspend' : 'Activate'}
-                      </button>
-                      <button
-                        className="btn btn-sm btn-danger"
-                        onClick={() => handleDeleteUser(user.id)}
-                      >
-                        Delete
-                      </button>
-                    </td>
+            {users && users.length > 0 ? (
+              <table className="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th>Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {users.map((user) => (
+                    <tr key={user.id}>
+                      <td>{user.name}</td>
+                      <td>{user.email}</td>
+                      <td>{user.role}</td>
+                      <td>
+                        <span
+                          className={`badge ${
+                            user.is_active ? 'bg-success' : 'bg-danger'
+                          }`}
+                        >
+                          {user.is_active ? 'Active' : 'Suspended'}
+                        </span>
+                      </td>
+                      <td>{new Date(user.created_at).toLocaleDateString()}</td>
+                      <td>
+                        <button
+                          className="btn btn-sm btn-primary me-2"
+                          onClick={() => setEditingUser(user)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="btn btn-sm btn-warning me-2"
+                          onClick={() =>
+                            handleToggleActive(user.id, user.is_active)
+                          }
+                        >
+                          {user.is_active ? 'Suspend' : 'Activate'}
+                        </button>
+                        <button
+                          className="btn btn-sm btn-danger"
+                          onClick={() => handleDeleteUser(user.id)}
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <div className="alert alert-info">
+                {loading ? 'Loading users...' : 'No users found.'}
+              </div>
+            )}
           </div>
         </div>
       )}
