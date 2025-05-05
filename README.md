@@ -213,7 +213,7 @@ Contributions are welcome! To contribute:
    ```
 5. Open a pull request.
 
-## Live Demo
+## Demo
 Check out the live application here: [HomeHive Live App](https://homehive-pbjjrxjhl-joels-projects-13e73204.vercel.app/)
 
 ---
