@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axios from '../utils/axios';
 import { useAuth } from '../context/AuthContext';
 import setAuthToken from '../utils/setAuthToken';
 
@@ -47,7 +47,7 @@ const Analytics = () => {
       }
       const response = await axios.get('/api/investment-analyses');
       console.log('Analyses fetched:', response.data);
-      setAnalyses(response.data);
+      setAnalyses(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error('Error fetching analyses:', error.response || error);
       setError('Failed to fetch analyses. Please try logging out and back in.');
@@ -280,7 +280,7 @@ const Analytics = () => {
 
       <div className="saved-analyses-container">
         <h2>Saved Analyses</h2>
-        {analyses.length > 0 ? (
+        {analyses && analyses.length > 0 ? (
           <div className="analyses-grid">
             {analyses.map((analysis) => (
               <div key={analysis.id} className="analysis-card">
