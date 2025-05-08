@@ -252,7 +252,7 @@ Contributions are welcome! To contribute:
 
 ## Demo
 
-Check out the live application here: [HomeHive Live App](https://homehive-rmbf3xm77-joels-projects-13e73204.vercel.app)
+Check out the live application here: [HomeHive Live App](https://homehive.vercel.app)
 
 ---
 
