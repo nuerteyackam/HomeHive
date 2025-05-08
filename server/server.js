@@ -26,7 +26,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:3000", // For local development
-      "https://homehive-rmbf3xm77-joels-projects-13e73204.vercel.app", // Your Vercel production domain
+      "https://homehive.vercel.app", // Your Vercel production domain
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
