@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { PropertyProvider } from './context/PropertyContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 // Layout Components
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
